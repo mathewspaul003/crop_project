@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Report PDF</title>
+    <style>
+        body {
+            font-family: Arial;
+            font-size: 12px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Smart Agriculture Crop Report</h2>
+
+    <p><b>User:</b> {{ session.user.first_name|default:session.user.username }}</p>
+    <p><b>Crop:</b> {{ session.crop_name|title }}</p>
+    <p><b>Prediction Date:</b> {{ session.created_at }}</p>
+
+    {% if not is_manual %}
+    <h3>Soil & Environmental Metrics</h3>
+    <table>
+        <tr>
+            <th>Nitrogen</th>
+            <td>{{ session.N }}</td>
+        </tr>
+        <tr>
+            <th>Phosphorus</th>
+            <td>{{ session.P }}</td>
+        </tr>
+        <tr>
+            <th>Potassium</th>
+            <td>{{ session.K }}</td>
+        </tr>
+        <tr>
+            <th>Temperature</th>
+            <td>{{ session.temperature }}°C</td>
+        </tr>
+        <tr>
+            <th>Humidity</th>
+            <td>{{ session.humidity }}%</td>
+        </tr>
+        <tr>
+            <th>Soil pH</th>
+            <td>{{ session.ph }}</td>
+        </tr>
+        <tr>
+            <th>Rainfall</th>
+            <td>{{ session.rainfall }}mm</td>
+        </tr>
+    </table>
+    {% else %}
+    <p><i>Note: This is a manual session report. Initial soil and environmental metrics were not provided.</i></p>
+    {% endif %}
+
+    <h3>Crop Cycle Status</h3>
+    <table>
+        <tr>
+            <th>Stage</th>
+            <th>Days</th>
+            <th>Status</th>
+            <th>Completed Date</th>
+        </tr>
+
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.crop_cycle.stage_name }}</td>
+            <td>{{ task.crop_cycle.start_day }} - {{ task.crop_cycle.end_day }}</td>
+
+            {% if task.is_completed %}
+            <td>Completed</td>
+            <td>{{ task.completed_at }}</td>
+            {% else %}
+            <td>Pending</td>
+            <td>-</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+
+</html>

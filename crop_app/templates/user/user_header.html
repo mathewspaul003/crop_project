@@ -1,0 +1,102 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+    body {
+        font-family: 'Outfit', sans-serif;
+        background-color: #f0f7f4 !important;
+    }
+
+    .glass-nav {
+        background: rgba(45, 106, 79, 0.9) !important;
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        transition: all 0.3s;
+    }
+
+    .nav-brand {
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: white !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+    .nav-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white !important;
+        padding: 8px 18px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .nav-btn:hover {
+        background: white;
+        color: #2d6a4f !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn-outline {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white !important;
+        padding: 8px 18px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .nav-btn-logout {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .nav-btn-logout:hover {
+        background: #ef4444;
+        color: white !important;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg glass-nav shadow-sm">
+    <div class="container">
+        <a class="nav-brand" href="/">
+            <span style="font-size: 1.8rem;">🌾</span>
+            <span>Smart Agriculture</span>
+        </a>
+
+        <div class="ms-auto d-flex align-items-center gap-3">
+            {% if user.is_authenticated %}
+            <a href="/dashboard/" class="nav-btn">📊 Dashboard</a>
+            <a href="/predict/" class="nav-btn">🔍 Predict</a>
+            <a href="/logout/" class="nav-btn nav-btn-outline nav-btn-logout">Logout</a>
+            {% else %}
+            <a href="/predict/" class="nav-btn">🔍 Try Predict</a>
+            <a href="/login/" class="nav-btn nav-btn-outline">Login</a>
+            <a href="/register/" class="nav-btn">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-3">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm"
+        style="border-radius: 12px; border: 1px solid rgba(0,0,0,0.1);" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>

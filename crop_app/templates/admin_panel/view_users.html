@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users | Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-dark: #1b4332;
+            --accent-red: #dc3545;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #f4f7f6 0%, #e2e8e5 100%);
+            min-height: 100vh;
+        }
+
+        .admin-nav {
+            background: rgba(220, 53, 69, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            padding: 35px;
+            margin-top: 30px;
+        }
+
+        .table-custom {
+            margin-top: 10px;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table-custom thead th {
+            border: none;
+            color: #6c757d;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            padding: 15px;
+        }
+
+        .table-custom tbody tr {
+            background: white;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .table-custom td {
+            padding: 20px 15px;
+            border: none;
+            vertical-align: middle;
+        }
+
+        .table-custom td:first-child {
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
+
+        .table-custom td:last-child {
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: #f1f3f5;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+        }
+
+        .username-badge {
+            background: #f0f4f3;
+            color: #2d6a4f;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 1px solid rgba(45, 106, 79, 0.1);
+        }
+
+        .page-title {
+            font-weight: 800;
+            font-size: 2rem;
+            color: var(--primary-dark);
+        }
+
+        .btn-back {
+            background: white;
+            color: var(--primary-dark) !important;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #f8f9fa;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar admin-nav shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="/admin-panel/dashboard/">🚜 AGRI ADMIN PRO</a>
+            <div class="d-flex gap-2">
+                <a href="/admin-panel/dashboard/" class="btn-back">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <h1 class="page-title">Community Directory</h1>
+                <p class="text-muted">Management of registered farmers and specialists</p>
+            </div>
+            <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">
+                {{ users|length }} Members
+            </span>
+        </div>
+
+        <div class="glass-card">
+            {% if users %}
+            <div class="table-responsive">
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th width="80">Member</th>
+                            <th>Full Name</th>
+                            <th>Email (Login ID)</th>
+                            <th>Member Since</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>
+                                <div class="user-avatar">👤</div>
+                            </td>
+                            <td>
+                                <span class="fw-bold d-block" style="color: var(--primary-dark);">
+                                    {{ user.first_name|default:"Unnamed User" }}</span>
+                            </td>
+                            <td>
+                                <span class="username-badge">{{ user.username }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted fw-600">{{ user.date_joined|date:"M d, Y" }}</span>
+                            </td>
+                            <td class="text-end">
+                                {% if not user.is_staff %}
+                                <a href="/admin-panel/users/delete/{{ user.id }}/" class="btn-delete"
+                                    onclick="return confirm('Are you sure you want to permanently delete this user?');"
+                                    style="background: #fff5f5; color: #dc3545; padding: 10px 15px; border-radius: 10px; text-decoration: none; font-size: 1.1rem; transition: 0.3s; display: inline-block;">
+                                    🗑️
+                                </a>
+                                {% else %}
+                                <span class="badge bg-secondary opacity-50">Locked</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div style="font-size: 3.5rem; margin-bottom: 20px;">👥</div>
+                <h4>Community is quiet</h4>
+                <p class="text-muted">No members have registered yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+
+</html>

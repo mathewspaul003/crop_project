@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Intelligence Hub | Smart Agriculture</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+
+        :root {
+            --primary-dark: #1b4332;
+            --accent-red: #dc3545;
+            --accent-crimson: #9b2226;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top left, #f8fbf9, #e9eceb);
+            color: var(--primary-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Navbar & Branding --- */
+        .admin-nav {
+            background: rgba(155, 34, 38, 0.9) !important;
+            backdrop-filter: blur(15px);
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-pill {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #27ae60;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* --- Header / Hero --- */
+        .hub-header {
+            background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-crimson) 100%);
+            padding: 60px 0 100px 0;
+            color: white;
+            border-bottom-left-radius: 60px;
+            border-bottom-right-radius: 60px;
+            box-shadow: 0 20px 40px rgba(155, 34, 38, 0.15);
+            margin-bottom: -60px;
+        }
+
+        .welcome-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- Stats Layout --- */
+        .stats-wrapper {
+            position: relative;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .hub-stat-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .hub-stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: white;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-main h4 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--primary-dark);
+        }
+
+        .stat-main p {
+            margin: 0;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-visual {
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* --- Navigation Menu --- */
+        .menu-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            padding-bottom: 60px;
+        }
+
+        .nav-hub-card {
+            position: relative;
+            background: white;
+            border-radius: 35px;
+            padding: 40px;
+            text-decoration: none !important;
+            color: inherit;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            transition: all 0.4s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .nav-hub-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+            border-color: transparent;
+        }
+
+        .hub-card-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #f3f4f7, #ffffff);
+            z-index: 1;
+            transition: all 0.4s;
+        }
+
+        /* Individual Card Themes - Animated Gradients */
+        .card-crops:hover .hub-card-bg {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+        }
+
+        .card-cycles:hover .hub-card-bg {
+            background: linear-gradient(135deg, #fbf2ff 0%, #ffffff 100%);
+        }
+
+        .card-users:hover .hub-card-bg {
+            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+        }
+
+        .card-feedback:hover .hub-card-bg {
+            background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hub-icon-box {
+            width: 65px;
+            height: 65px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .nav-hub-card:hover .hub-icon-box {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .hub-card-title {
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin: 0;
+            color: var(--primary-dark);
+        }
+
+        .hub-card-desc {
+            color: #6c757d;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .hub-arrow {
+            position: absolute;
+            right: 35px;
+            bottom: 35px;
+            font-size: 1.5rem;
+            color: var(--accent-red);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .nav-hub-card:hover .hub-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* --- Custom Buttons --- */
+        .btn-hub-logout {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 14px;
+            font-weight: 700;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+
+        .btn-hub-logout:hover {
+            background: white;
+            color: var(--accent-red);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar admin-nav shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-white" href="#">
+                <span>🚜</span>
+                <span>INTELLIGENCE HUB</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <div class="status-pill d-none d-md-flex">
+                    <div class="status-dot"></div>
+                    SYSTEM LIVE
+                </div>
+                <a href="/admin-panel/logout/" class="btn-hub-logout text-decoration-none">Sign Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hub-header">
+        <div class="container text-center">
+            <span class="welcome-badge">CONTROL PANEL ACTIVE</span>
+            <h1 class="display-3 fw-bold mb-2">Welcome Back, Administrator</h1>
+            <p class="fs-5 opacity-75">Overseeing agricultural optimization and community growth</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Floating Stats Widgets -->
+        <div class="stats-wrapper">
+            <div class="hub-stat-card">
+                <div class="stat-main">
+                    <h4>{{ crop_count }}</h4>
+                    <p>Crop Varieties</p>
+                </div>
+                <div class="stat-visual" style="background: #e8f5e9; color: #2e7d32;">🌾</div>
+            </div>
+
+            <div class="hub-stat-card">
+                <div class="stat-main">
+                    <h4>{{ user_count }}</h4>
+                    <p>Farmers Enrolled</p>
+                </div>
+                <div class="stat-visual" style="background: #e3f2fd; color: #1565c0;">👨‍🌾</div>
+            </div>
+
+            <div class="hub-stat-card">
+                <div class="stat-main">
+                    <h4>{{ feedback_count }}</h4>
+                    <p>Total Feedback</p>
+                </div>
+                <div class="stat-visual" style="background: #fff8e1; color: #f9a825;">📬</div>
+            </div>
+        </div>
+
+        <!-- High-Impact Navigation Menu -->
+        <div class="menu-wrapper">
+            <a href="/admin-panel/crops/" class="nav-hub-card card-crops">
+                <div class="hub-card-bg"></div>
+                <div class="card-content">
+                    <div class="hub-icon-box" style="background: #f0fdf4; color: #15803d;">🌱</div>
+                    <h3 class="hub-card-title">Manage Crops</h3>
+                    <p class="hub-card-desc">Master list of agricultural varieties and environmental requirements.</p>
+                </div>
+                <span class="hub-arrow">→</span>
+            </a>
+
+            <a href="/admin-panel/cycles/" class="nav-hub-card card-cycles">
+                <div class="hub-card-bg"></div>
+                <div class="card-content">
+                    <div class="hub-icon-box" style="background: #fbf2ff; color: #7e22ce;">🔄</div>
+                    <h3 class="hub-card-title">Cycle Architect</h3>
+                    <p class="hub-card-desc">Design and calibrate growth stages and expert advisory timelines.</p>
+                </div>
+                <span class="hub-arrow">→</span>
+            </a>
+
+            <a href="/admin-panel/users/" class="nav-hub-card card-users">
+                <div class="hub-card-bg"></div>
+                <div class="card-content">
+                    <div class="hub-icon-box" style="background: #eff6ff; color: #1d4ed8;">👥</div>
+                    <h3 class="hub-card-title">View Users</h3>
+                    <p class="hub-card-desc">Comprehensive database of registered farmers and platform members.</p>
+                </div>
+                <span class="hub-arrow">→</span>
+            </a>
+
+            <a href="/admin-panel/feedback/" class="nav-hub-card card-feedback">
+                <div class="hub-card-bg"></div>
+                <div class="card-content">
+                    <div class="hub-icon-box" style="background: #fffbeb; color: #b45309;">💬</div>
+                    <h3 class="hub-card-title">Feedback</h3>
+                    <p class="hub-card-desc">Direct line to community sentiment, suggestions, and field reports.</p>
+                </div>
+                <span class="hub-arrow">→</span>
+            </a>
+        </div>
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Smart Agriculture</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f0f7f4;
+            color: #1b4332;
+        }
+
+        .dashboard-container {
+            padding: 40px 0;
+        }
+
+        .welcome-header {
+            margin-bottom: 40px;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(45, 106, 79, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: inherit !important;
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(45, 106, 79, 0.1);
+            border-color: #2d6a4f;
+        }
+
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            background: #e8f3ee;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+
+        .action-card:hover .icon-box {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include "user/user_header.html" %}
+
+    <div class="container dashboard-container">
+
+        <div class="welcome-header text-center">
+            <h1 class="fw-bold">Welcome back, {{ user.first_name|default:user.username|title }}! 👋</h1>
+            <p class="text-muted">Manage your farm activities and get intelligent insights.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Predict Crop (FIXED LINK) -->
+            <div class="col-md-4">
+                <a href="/predict/" class="action-card">
+                    <div class="icon-box">🔍</div>
+                    <h3 class="card-title">Predict Crop</h3>
+                    <p class="card-desc">Analyze soil and climate data to find the best crop for your farm.</p>
+                </a>
+            </div>
+
+            <!-- Active Cycles -->
+            <div class="col-md-4">
+                <a href="/tasks/" class="action-card">
+                    <div class="icon-box">🌱</div>
+                    <h3 class="card-title">Track Cycles</h3>
+                    <p class="card-desc">Monitor your ongoing crop growth and get stage-wise advice.</p>
+                </a>
+            </div>
+
+            <!-- Search Database -->
+            <div class="col-md-4">
+                <a href="/crop-search/" class="action-card">
+                    <div class="icon-box">📚</div>
+                    <h3 class="card-title">Search Crop</h3>
+                    <p class="card-desc">Access detailed information and guidance for various crops.</p>
+                </a>
+            </div>
+
+            <!-- Reports -->
+            <div class="col-md-4">
+                <a href="/reports/" class="action-card">
+                    <div class="icon-box">📊</div>
+                    <h3 class="card-title">Reports</h3>
+                    <p class="card-desc">View and download your farming history and analysis reports.</p>
+                </a>
+            </div>
+
+            <!-- My History -->
+            <div class="col-md-4">
+                <a href="/my-sessions/" class="action-card">
+                    <div class="icon-box">📌</div>
+                    <h3 class="card-title">My Sessions</h3>
+                    <p class="card-desc">View all your previous prediction sessions and crop history.</p>
+                </a>
+            </div>
+
+            <!-- Feedback -->
+            <div class="col-md-4">
+                <a href="/feedback/" class="action-card">
+                    <div class="icon-box">💬</div>
+                    <h3 class="card-title">Feedback</h3>
+                    <p class="card-desc">We value your thoughts! Share your experience or suggestions for improvement.
+                    </p>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    {% include "chatbot/chatbot.html" %}
+
+</body>
+
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Crop Details | Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-dark: #1b4332;
+            --accent-red: #dc3545;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #f4f7f6 0%, #e2e8e5 100%);
+            min-height: 100vh;
+        }
+
+        .admin-nav {
+            background: rgba(220, 53, 69, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+            padding: 45px;
+        }
+
+        .form-title {
+            font-weight: 800;
+            font-size: 2rem;
+            color: var(--primary-dark);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: #495057;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .form-control {
+            border-radius: 14px;
+            padding: 14px 18px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            background: white;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1);
+            outline: none;
+        }
+
+        .btn-save {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(220, 53, 69, 0.3);
+            background: #c82333;
+            color: white;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: white;
+            color: var(--accent-red);
+        }
+
+        .alert-custom {
+            border-radius: 15px;
+            font-weight: 600;
+            border: none;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar admin-nav shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold d-flex align-items-center gap-2" href="/admin-panel/dashboard/">
+                <span>🚜</span>
+                <span>AGRI ADMIN PRO</span>
+            </a>
+            <a href="/admin-panel/crops/" class="btn-back">⬅ Back to List</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="glass-card">
+                <h1 class="form-title">Edit Crop Variety</h1>
+
+                {% if msg %}
+                <div class="alert alert-success alert-custom text-center">
+                    ✅ {{ msg }}
+                </div>
+                {% endif %}
+
+                {% if error %}
+                <div class="alert alert-danger alert-custom text-center">
+                    ❌ {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label">Variety Name</label>
+                        <input type="text" name="crop_name" class="form-control" value="{{ crop.crop_name }}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Cultivation Season</label>
+                            <input type="text" name="season" class="form-control" value="{{ crop.season }}" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Duration (Days)</label>
+                            <input type="number" name="duration_days" class="form-control"
+                                value="{{ crop.duration_days }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Soil Type & Recommendations</label>
+                        <input type="text" name="soil_type" class="form-control" value="{{ crop.soil_type }}" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Watering Protocol</label>
+                        <textarea name="watering" class="form-control" rows="3" required>{{ crop.watering }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Fertilizer Advisory</label>
+                        <textarea name="fertilizer" class="form-control" rows="3"
+                            required>{{ crop.fertilizer }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Common Disease Management</label>
+                        <textarea name="common_diseases" class="form-control"
+                            rows="3">{{ crop.common_diseases }}</textarea>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="form-label">Variety Image Preview</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                        {% if crop.image %}
+                        <div class="mt-3 p-2 bg-light rounded text-center">
+                            <img src="{{ crop.image.url }}" height="100" class="rounded shadow-sm">
+                            <p class="small text-muted mt-2 mb-0">Current Image</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn-save shadow">Update Crop Variety</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
