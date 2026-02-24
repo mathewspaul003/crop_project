@@ -1,0 +1,16 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "buildCommand": "python -m pip install -r requirements.txt && python manage.py collectstatic --noinput",
+    "builds": [
+        {
+            "src": "crop_project/wsgi.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "crop_project/wsgi.py"
+        }
+    ]
+}
