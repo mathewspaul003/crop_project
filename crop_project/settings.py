@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 import dj_database_url
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,7 +80,8 @@ WSGI_APPLICATION = 'crop_project.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600
+        conn_max_age=600,
+        ssl_require=True if os.environ.get("DATABASE_URL") else False
     )
 }
 
@@ -118,7 +120,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -126,6 +128,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 LOGIN_URL = "/login/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
