@@ -23,14 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-d-qizdqc0=#ev)6)au1vp)1)eq(i&)7*q1-n25j-i6^%n)fkm_')
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-only-secret-key-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*'] # In production, this should be your specific domain
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
+vercel_url = os.environ.get("VERCEL_URL")
+if vercel_url:
+    ALLOWED_HOSTS.append(vercel_url)
 
+CSRF_TRUSTED_ORIGINS = []
+if vercel_url:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{vercel_url}")
 # Application definition
 
 INSTALLED_APPS = [
@@ -132,4 +138,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = "/login/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDqdEywhexl41_ZfYbzx-LfYH3Qq4y2vmE")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
