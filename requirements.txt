@@ -33,7 +33,6 @@ protobuf==5.29.6
 psycopg2-binary==2.9.11
 pyasn1==0.6.2
 pyasn1_modules==0.4.2
-# pycairo removed for Vercel compatibility
 pycparser==3.0
 pydantic==2.12.5
 pydantic_core==2.41.5
@@ -45,7 +44,6 @@ python-bidi==0.6.7
 PyYAML==6.0.3
 reportlab==4.4.10
 requests==2.32.5
-# rlPyCairo removed for Vercel compatibility
 rsa==4.9.1
 scikit-learn==1.6.1
 scipy==1.15.2
