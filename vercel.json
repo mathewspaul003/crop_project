@@ -12,7 +12,8 @@
       "dest": "/staticfiles/$1"
     },
     {
-      "handle": "filesystem"
+      "src": "/media/(.*)",
+      "dest": "media/$1"
     },
     {
       "src": "/(.*)",
