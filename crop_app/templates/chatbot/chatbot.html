@@ -254,6 +254,9 @@
     </div>
 </div>
 
+<!-- Markdown Parser -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 <script>
     function toggleBotWindow() {
         const win = document.getElementById('chatbot-window');
@@ -299,7 +302,8 @@
             .then(data => {
                 const aiDiv = document.createElement('div');
                 aiDiv.className = 'bot-msg ai';
-                aiDiv.innerHTML = data.reply.replace(/\n/g, "<br>");
+                // Parse markdown for premium formatting
+                aiDiv.innerHTML = marked.parse(data.reply);
                 container.appendChild(aiDiv);
                 container.scrollTop = container.scrollHeight;
             })
