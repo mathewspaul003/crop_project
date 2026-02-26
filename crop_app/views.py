@@ -8,7 +8,7 @@ import joblib
 import os
 from django.http import HttpResponse
 from django.template.loader import get_template
-from weasyprint import HTML
+from fpdf import FPDF
 from .models import CropDetails, CropCycle, UserCropSession, UserCycleTask, ChatbotKnowledge, Feedback
 import google.generativeai as genai
 from django.conf import settings
@@ -528,20 +528,86 @@ def download_report_pdf(request):
     # Check if manual
     is_manual = (session.N == 0 and session.P == 0 and session.K == 0)
 
-    template_path = "crop_app/report_pdf.html"
-    context = {
-        "session": session, 
-        "tasks": tasks, 
-        "is_manual": is_manual
-    }
+    # Create PDF using fpdf2
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
 
-    template = get_template(template_path)
-    html = template.render(context)
+    # Title
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(0, 10, "Smart Agriculture Crop Report", ln=True, align="C")
+    pdf.ln(5)
 
+    # User Info
+    pdf.set_font("Arial", "", 12)
+    user_name = session.user.first_name if session.user.first_name else session.user.username
+    pdf.cell(0, 8, f"User: {user_name}", ln=True)
+    pdf.cell(0, 8, f"Crop: {session.crop_name.title()}", ln=True)
+    pdf.cell(0, 8, f"Prediction Date: {session.created_at.strftime('%Y-%m-%d %H:%M')}", ln=True)
+    pdf.ln(5)
+
+    # Soil & Environmental Metrics
+    if not is_manual:
+        pdf.set_font("Arial", "B", 14)
+        pdf.cell(0, 10, "Soil & Environmental Metrics", ln=True)
+        pdf.ln(2)
+
+        # Table header
+        pdf.set_font("Arial", "B", 11)
+        pdf.set_fill_color(240, 240, 240)
+        pdf.cell(80, 8, "Metric", border=1, fill=True)
+        pdf.cell(0, 8, "Value", border=1, fill=True, ln=True)
+
+        # Table data
+        pdf.set_font("Arial", "", 11)
+        metrics = [
+            ("Nitrogen", str(session.N)),
+            ("Phosphorus", str(session.P)),
+            ("Potassium", str(session.K)),
+            ("Temperature", f"{session.temperature}°C"),
+            ("Humidity", f"{session.humidity}%"),
+            ("Soil pH", str(session.ph)),
+            ("Rainfall", f"{session.rainfall}mm"),
+        ]
+        for metric, value in metrics:
+            pdf.cell(80, 8, metric, border=1)
+            pdf.cell(0, 8, value, border=1, ln=True)
+        pdf.ln(5)
+    else:
+        pdf.set_font("Arial", "I", 10)
+        pdf.cell(0, 8, "Note: This is a manual session report. Initial soil and environmental metrics were not provided.", ln=True)
+        pdf.ln(5)
+
+    # Crop Cycle Status
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, "Crop Cycle Status", ln=True)
+    pdf.ln(2)
+
+    # Table header
+    pdf.set_font("Arial", "B", 10)
+    pdf.set_fill_color(240, 240, 240)
+    pdf.cell(60, 8, "Stage", border=1, fill=True)
+    pdf.cell(35, 8, "Days", border=1, fill=True)
+    pdf.cell(35, 8, "Status", border=1, fill=True)
+    pdf.cell(0, 8, "Completed Date", border=1, fill=True, ln=True)
+
+    # Table data
+    pdf.set_font("Arial", "", 10)
+    for task in tasks:
+        stage_name = task.crop_cycle.stage_name
+        days = f"{task.crop_cycle.start_day} - {task.crop_cycle.end_day}"
+        status = "Completed" if task.is_completed else "Pending"
+        completed_date = task.completed_at.strftime('%Y-%m-%d') if task.is_completed and task.completed_at else "-"
+        
+        pdf.cell(60, 8, stage_name, border=1)
+        pdf.cell(35, 8, days, border=1)
+        pdf.cell(35, 8, status, border=1)
+        pdf.cell(0, 8, completed_date, border=1, ln=True)
+
+    # Generate response
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{session.crop_name}_report_{session.id}.pdf"'
-
-    HTML(string=html).write_pdf(response)
+    pdf.output(response)
 
     return response
 @login_required
