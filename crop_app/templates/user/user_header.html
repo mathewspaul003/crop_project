@@ -83,36 +83,29 @@
             flex-direction: column !important;
             align-items: stretch !important;
             width: 100%;
-            gap: 10px !important; /* Specific gap for mobile */
+            gap: 10px !important;
+            /* Specific gap for mobile */
         }
 
         .nav-btn {
             width: 100%;
-            margin-bottom: 0px !important; /* Use gap instead */
+            margin-bottom: 0px !important;
+            /* Use gap instead */
         }
     }
 
     .navbar-toggler {
         border: none !important;
-        padding: 0;
+        padding: 12px !important;
+        margin-right: -12px;
     }
 
     .navbar-toggler:focus {
         box-shadow: none !important;
     }
-
-    .toggler-icon {
-        width: 30px;
-        height: 3px;
-        background: white;
-        display: block;
-        margin: 6px 0;
-        transition: 0.3s;
-        border-radius: 3px;
-    }
 </style>
 
-<nav class="navbar navbar-expand-lg glass-nav shadow-sm">
+<nav class="navbar navbar-expand-lg glass-nav navbar-dark shadow-sm">
     <div class="container">
         <a class="nav-brand" href="/">
             <span style="font-size: 1.8rem;">🌾</span>
@@ -121,9 +114,7 @@
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
             aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="toggler-icon"></span>
-            <span class="toggler-icon"></span>
-            <span class="toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarMain">
