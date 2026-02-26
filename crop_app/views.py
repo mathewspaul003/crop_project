@@ -9,6 +9,7 @@ import os
 from django.http import HttpResponse
 from django.template.loader import get_template
 from fpdf import FPDF
+from io import BytesIO
 from .models import CropDetails, CropCycle, UserCropSession, UserCycleTask, ChatbotKnowledge, Feedback
 import google.generativeai as genai
 from django.conf import settings
@@ -605,10 +606,13 @@ def download_report_pdf(request):
         pdf.cell(0, 8, completed_date, border=1, ln=True)
 
     # Generate response
-    response = HttpResponse(content_type="application/pdf")
+    buffer = BytesIO()
+    pdf.output(buffer)
+    buffer.seek(0)
+    
+    response = HttpResponse(buffer.getvalue(), content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{session.crop_name}_report_{session.id}.pdf"'
-    pdf.output(response)
-
+    
     return response
 @login_required
 def all_tasks(request):

@@ -43,3 +43,7 @@ media/
 # OS
 .DS_Store
 Thumbs.db
+
+# Environment
+.env
+.env.*
