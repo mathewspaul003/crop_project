@@ -8,7 +8,7 @@ import joblib
 import os
 from django.http import HttpResponse
 from django.template.loader import get_template
-from xhtml2pdf import pisa
+from weasyprint import HTML
 from .models import CropDetails, CropCycle, UserCropSession, UserCycleTask, ChatbotKnowledge, Feedback
 import google.generativeai as genai
 from django.conf import settings
@@ -535,16 +535,13 @@ def download_report_pdf(request):
         "is_manual": is_manual
     }
 
-    response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = f'attachment; filename="{session.crop_name}_report_{session.id}.pdf"'
-
     template = get_template(template_path)
     html = template.render(context)
 
-    pisa_status = pisa.CreatePDF(html, dest=response)
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{session.crop_name}_report_{session.id}.pdf"'
 
-    if pisa_status.err:
-        return HttpResponse("❌ Error generating PDF")
+    HTML(string=html).write_pdf(response)
 
     return response
 @login_required
