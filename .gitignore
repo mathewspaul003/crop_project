@@ -31,7 +31,7 @@ db.sqlite3
 *.log
 local_settings.py
 staticfiles/
-media/
+# media/
 
 # IDEs
 .vscode/
