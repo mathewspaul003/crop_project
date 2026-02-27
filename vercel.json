@@ -8,10 +8,6 @@
   ],
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "static_build/$1"
-    },
-    {
       "src": "/(.*)",
       "dest": "crop_project/wsgi.py"
     }
