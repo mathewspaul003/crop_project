@@ -147,6 +147,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = "/login/"
-MEDIA_URL = "/media/"
+MEDIA_URL = "/static/"
 MEDIA_ROOT = BASE_DIR / "media"
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
