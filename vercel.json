@@ -12,10 +12,6 @@
       "dest": "staticfiles/$1"
     },
     {
-      "src": "/media/(.*)",
-      "dest": "staticfiles/$1"
-    },
-    {
       "src": "/(.*)",
       "dest": "crop_project/wsgi.py"
     }
