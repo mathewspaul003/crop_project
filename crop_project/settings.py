@@ -136,17 +136,12 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
-# Ensure media folder files (like initial crop photos) are collected as static for Vercel
-STATICFILES_DIRS = [
-    BASE_DIR / "media",
-]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = "/login/"
-MEDIA_URL = "/static/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
