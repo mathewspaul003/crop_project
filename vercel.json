@@ -13,7 +13,7 @@
     },
     {
       "src": "/media/(.*)",
-      "dest": "/media/$1"
+      "dest": "/staticfiles/$1"
     },
     {
       "src": "/(.*)",
