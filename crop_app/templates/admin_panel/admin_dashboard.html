@@ -337,10 +337,36 @@
 
             <div class="hub-stat-card">
                 <div class="stat-main">
+                    <h4>{{ session_count }}</h4>
+                    <p>Total Predictions</p>
+                </div>
+                <div class="stat-visual" style="background: #f3e5f5; color: #7b1fa2;">📈</div>
+            </div>
+
+            <div class="hub-stat-card">
+                <div class="stat-main">
                     <h4>{{ feedback_count }}</h4>
                     <p>Total Feedback</p>
                 </div>
                 <div class="stat-visual" style="background: #fff8e1; color: #f9a825;">📬</div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <div class="glass-card h-100"
+                    style="padding: 30px; border-radius: 35px; background: white; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                    <h4 class="fw-bold mb-4" style="color: var(--primary-dark);">Weekly Activity Timeline</h4>
+                    <canvas id="weeklyChart" height="150"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="glass-card h-100"
+                    style="padding: 30px; border-radius: 35px; background: white; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                    <h4 class="fw-bold mb-4" style="color: var(--primary-dark);">Popular Crops</h4>
+                    <canvas id="cropChart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -388,6 +414,57 @@
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctxWeekly = document.getElementById('weeklyChart').getContext('2d');
+        new Chart(ctxWeekly, {
+            type: 'line',
+            data: {
+                labels: {{ weekly_labels| safe }},
+            datasets: [{
+                label: 'New Predictions',
+                data: {{ weekly_data| safe }},
+            borderColor: '#9b2226',
+            backgroundColor: 'rgba(155, 34, 38, 0.1)',
+            borderWidth: 3,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#9b2226',
+            pointRadius: 5
+                }]
+            },
+            options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { display: false } },
+                x: { grid: { display: false } }
+            }
+        }
+        });
+
+        const ctxCrop = document.getElementById('cropChart').getContext('2d');
+        new Chart(ctxCrop, {
+            type: 'doughnut',
+            data: {
+                labels: {{ top_crop_labels| safe }},
+            datasets: [{
+                data: {{ top_crop_data| safe }},
+            backgroundColor: [
+                '#1b4332', '#2d6a4f', '#40916c', '#52b788', '#74c69d'
+            ],
+            borderWidth: 0
+                }]
+            },
+            options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+            },
+            cutout: '70%'
+        }
+        });
+    </script>
 </body>
 
 </html>

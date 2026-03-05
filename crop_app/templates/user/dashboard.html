@@ -109,6 +109,22 @@
             <p class="text-muted">Manage your farm activities and get intelligent insights.</p>
         </div>
 
+        {% if overdue_tasks_count > 0 %}
+        <div class="alert alert-warning border-0 shadow-sm mb-5 p-4"
+            style="border-radius: 20px; background: #fffdf2; border-left: 5px solid #ffc107 !important;">
+            <div class="d-flex align-items-center gap-3">
+                <div style="font-size: 2rem;">⏳</div>
+                <div>
+                    <h5 class="fw-bold mb-1">Attention Required</h5>
+                    <p class="mb-0 text-muted">You have **{{ overdue_tasks_count }} pending growth stages** that need
+                        your attention. Check your active cycles to stay on track!</p>
+                </div>
+                <a href="/tasks/" class="btn btn-warning ms-auto fw-bold px-4" style="border-radius: 12px;">View
+                    Tasks</a>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="row g-4 justify-content-center">
             <!-- Predict Crop (FIXED LINK) -->
             <div class="col-md-4">

@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views_split as views
 
 urlpatterns = [
     path('', views.index, name="index"),
@@ -35,5 +35,7 @@ urlpatterns = [
     path("admin-panel/feedback/", views.admin_feedback_view, name="admin_feedback_view"),
     path("admin-panel/users/", views.admin_users_view, name="admin_users_view"),
     path("admin-panel/users/delete/<int:user_id>/", views.admin_delete_user, name="admin_delete_user"),
+    path("admin-panel/users/<int:user_id>/crops/", views.admin_user_crops, name="admin_user_crops"),
+
     path("my-sessions/delete/<int:session_id>/", views.delete_session, name="delete_session"),
 ]

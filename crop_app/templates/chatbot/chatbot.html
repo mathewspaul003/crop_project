@@ -151,6 +151,15 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
+    /* Typing Indicator */
+    .typing-indicator {
+        font-style: italic;
+        color: #666;
+        font-size: 12px;
+        margin-left: 15px;
+        display: none;
+    }
+
     /* Input Area */
     #chatbot-input-area {
         padding: 15px;
@@ -243,6 +252,11 @@
         {% endif %}
     </div>
 
+    <!-- Typing indicator inside the message area -->
+    <div id="typing-indicator" class="typing-indicator">
+        🚜 Agri Assistant is typing...
+    </div>
+
     <div id="chatbot-input-area">
         <input type="text" id="botQuery" placeholder="Ask something..."
             onkeypress="if(event.key==='Enter') sendBotMessage()">
@@ -271,8 +285,11 @@
 
     function sendBotMessage() {
         const input = document.getElementById('botQuery');
+        const sendBtn = document.getElementById('chatbot-send-btn');
+        const typing = document.getElementById('typing-indicator');
         const msg = input.value.trim();
-        if (!msg) return;
+
+        if (!msg || input.disabled) return;
 
         const container = document.getElementById('chatbot-messages');
 
@@ -282,7 +299,11 @@
         userDiv.textContent = msg;
         container.appendChild(userDiv);
 
+        // Prep UI state
         input.value = '';
+        input.disabled = true;
+        sendBtn.disabled = true;
+        typing.style.display = 'block';
         container.scrollTop = container.scrollHeight;
 
         // Context (Standardized variables from Django views)
@@ -300,6 +321,12 @@
         })
             .then(res => res.json())
             .then(data => {
+                // Reset UI State
+                input.disabled = false;
+                sendBtn.disabled = false;
+                typing.style.display = 'none';
+                input.focus();
+
                 const aiDiv = document.createElement('div');
                 aiDiv.className = 'bot-msg ai';
                 // Parse markdown for premium formatting
@@ -308,11 +335,16 @@
                 container.scrollTop = container.scrollHeight;
             })
             .catch(err => {
+                input.disabled = false;
+                sendBtn.disabled = false;
+                typing.style.display = 'none';
+
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'bot-msg ai';
                 errorDiv.style.color = 'red';
                 errorDiv.textContent = "⚠️ Sorry, I encountered an error. Please try again.";
                 container.appendChild(errorDiv);
+                container.scrollTop = container.scrollHeight;
             });
     }
 </script>

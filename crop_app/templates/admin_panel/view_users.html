@@ -59,6 +59,10 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
         }
 
+        .table-custom tbody tr:hover {
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        }
+
         .table-custom td {
             padding: 20px 15px;
             border: none;
@@ -97,6 +101,20 @@
             border: 1px solid rgba(45, 106, 79, 0.1);
         }
 
+        .session-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .session-badge.zero {
+            background: #f5f5f5;
+            color: #9e9e9e;
+        }
+
         .page-title {
             font-weight: 800;
             font-size: 2rem;
@@ -117,6 +135,24 @@
         .btn-back:hover {
             background: #f8f9fa;
             transform: translateX(-5px);
+        }
+
+        .btn-view-crops {
+            background: #f0f9f4;
+            color: #2d6a4f;
+            padding: 9px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid rgba(45, 106, 79, 0.15);
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-view-crops:hover {
+            background: #d8f0e4;
+            color: #1b4332;
         }
     </style>
 </head>
@@ -139,49 +175,63 @@
                 <p class="text-muted">Management of registered farmers and specialists</p>
             </div>
             <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">
-                {{ users|length }} Members
+                {{ user_data|length }} Members
             </span>
         </div>
 
         <div class="glass-card">
-            {% if users %}
+            {% if user_data %}
             <div class="table-responsive">
                 <table class="table table-custom">
                     <thead>
                         <tr>
-                            <th width="80">Member</th>
+                            <th width="60">Member</th>
                             <th>Full Name</th>
                             <th>Email (Login ID)</th>
                             <th>Member Since</th>
+                            <th>Sessions</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for user in users %}
+                        {% for item in user_data %}
                         <tr>
                             <td>
                                 <div class="user-avatar">👤</div>
                             </td>
                             <td>
                                 <span class="fw-bold d-block" style="color: var(--primary-dark);">
-                                    {{ user.first_name|default:"Unnamed User" }}</span>
+                                    {{ item.user.first_name|default:"Unnamed User" }}
+                                </span>
                             </td>
                             <td>
-                                <span class="username-badge">{{ user.username }}</span>
+                                <span class="username-badge">{{ item.user.username }}</span>
                             </td>
                             <td>
-                                <span class="text-muted fw-600">{{ user.date_joined|date:"M d, Y" }}</span>
+                                <span class="text-muted">{{ item.user.date_joined|date:"M d, Y" }}</span>
+                            </td>
+                            <td>
+                                <span class="session-badge {% if item.session_count == 0 %}zero{% endif %}">
+                                    🌾 {{ item.session_count }}
+                                </span>
                             </td>
                             <td class="text-end">
-                                {% if not user.is_staff %}
-                                <a href="/admin-panel/users/delete/{{ user.id }}/" class="btn-delete"
-                                    onclick="return confirm('Are you sure you want to permanently delete this user?');"
-                                    style="background: #fff5f5; color: #dc3545; padding: 10px 15px; border-radius: 10px; text-decoration: none; font-size: 1.1rem; transition: 0.3s; display: inline-block;">
-                                    🗑️
-                                </a>
-                                {% else %}
-                                <span class="badge bg-secondary opacity-50">Locked</span>
-                                {% endif %}
+                                <div class="d-flex justify-content-end align-items-center gap-2">
+                                    <!-- View Crops Button -->
+                                    <a href="/admin-panel/users/{{ item.user.id }}/crops/" class="btn-view-crops">
+                                        🌱 View Crops
+                                    </a>
+                                    <!-- Delete Button -->
+                                    {% if not item.user.is_staff %}
+                                    <a href="/admin-panel/users/delete/{{ item.user.id }}/"
+                                        onclick="return confirm('Are you sure you want to permanently delete this user?');"
+                                        style="background: #fff5f5; color: #dc3545; padding: 9px 14px; border-radius: 10px; text-decoration: none; font-size: 1.1rem; transition: 0.3s; display: inline-block; border: 1px solid rgba(220,53,69,0.15);">
+                                        🗑️
+                                    </a>
+                                    {% else %}
+                                    <span class="badge bg-secondary opacity-50">Locked</span>
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}

@@ -144,6 +144,13 @@
                     <form method="post" action="/predict/">
                         {% csrf_token %}
 
+                        {% if error %}
+                        <div class="alert alert-danger border-0 shadow-sm mb-4"
+                            style="border-radius: 12px; font-weight: 600;">
+                            {{ error }}
+                        </div>
+                        {% endif %}
+
                         <div class="row g-4">
                             <!-- Nutrients -->
                             <div class="col-12">
@@ -171,17 +178,26 @@
 
                             <!-- Environment -->
                             <div class="col-12">
-                                <h5 class="mb-4" style="color: #2d6a4f; opacity: 0.8">🌍 environmental factors</h5>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h5 class="mb-0" style="color: #2d6a4f; opacity: 0.8">🌍 environmental factors</h5>
+                                    <button type="button" id="getWeatherBtn" class="btn btn-sm btn-outline-success"
+                                        style="border-radius: 10px; font-weight: 600;">
+                                        📍 Auto-fill from Location
+                                    </button>
+                                </div>
+                                <div id="weatherStatus" class="text-muted mb-3 d-none" style="font-size: 0.85rem;">
+                                </div>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Temperature (°C)</label>
-                                        <input type="number" step="any" name="temperature" class="form-control" required
-                                            placeholder="Ex: 25.5" value="{{ values.temperature }}">
+                                        <input type="number" step="any" name="temperature" id="id_temp"
+                                            class="form-control" required placeholder="Ex: 25.5"
+                                            value="{{ values.temperature }}">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Humidity (%)</label>
-                                        <input type="number" step="any" name="humidity" class="form-control" required
-                                            placeholder="Ex: 82" value="{{ values.humidity }}">
+                                        <input type="number" step="any" name="humidity" id="id_hum" class="form-control"
+                                            required placeholder="Ex: 82" value="{{ values.humidity }}">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Soil pH</label>
@@ -190,12 +206,54 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Rainfall (mm)</label>
-                                        <input type="number" step="any" name="rainfall" class="form-control" required
-                                            placeholder="Ex: 200" value="{{ values.rainfall }}">
+                                        <input type="number" step="any" name="rainfall" id="id_rain"
+                                            class="form-control" required placeholder="Ex: 200"
+                                            value="{{ values.rainfall }}">
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <script>
+                            document.getElementById('getWeatherBtn').addEventListener('click', function () {
+                                const status = document.getElementById('weatherStatus');
+                                status.classList.remove('d-none');
+                                status.textContent = '🛰️ Detecting location...';
+
+                                if (navigator.geolocation) {
+                                    navigator.geolocation.getCurrentPosition(function (position) {
+                                        const lat = position.coords.latitude;
+                                        const lon = position.coords.longitude;
+                                        status.textContent = '🌦️ Fetching live weather data...';
+
+                                        // Open-Meteo API (No key required)
+                                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m,precipitation&timezone=auto`)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                const temp = data.current_weather.temperature;
+                                                const hum = data.hourly.relativehumidity_2m[0];
+                                                const rain = data.hourly.precipitation[0] * 10; // Simple estimation for daily rainfall
+
+                                                document.getElementById('id_temp').value = temp;
+                                                document.getElementById('id_hum').value = hum;
+                                                document.getElementById('id_rain').value = rain;
+
+                                                status.textContent = '✅ Weather data applied successfully!';
+                                                status.classList.add('text-success');
+                                            })
+                                            .catch(error => {
+                                                status.textContent = '❌ Failed to fetch weather data.';
+                                                status.classList.add('text-danger');
+                                            });
+                                    }, function () {
+                                        status.textContent = '❌ Location access denied.';
+                                        status.classList.add('text-danger');
+                                    });
+                                } else {
+                                    status.textContent = '❌ Geolocation not supported by browser.';
+                                }
+                            });
+                        </script>
 
                         <div class="d-grid mt-5">
                             <button type="submit" class="btn btn-predict">
