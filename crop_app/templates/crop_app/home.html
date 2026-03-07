@@ -1,292 +1,403 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crop Recommendation</title>
+    <title>Smart Crop Recommendation System | AI-Powered Agriculture</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #f0f7f4 0%, #e8f3ee 100%);
-            min-height: 100vh;
-        }
-
-        .premium-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 10px 30px rgba(45, 106, 79, 0.08);
-            padding: 40px;
-            transition: transform 0.3s ease;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #2d6a4f;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            border-radius: 12px;
-            padding: 12px 16px;
-            border: 1.5px solid #e0e0e0;
-            background: #fcfcfc;
-            transition: all 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: #2d6a4f;
-            box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.1);
-            background: white;
-        }
-
-        .btn-predict {
-            background: #2d6a4f;
-            color: white;
-            padding: 14px;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            border: none;
-            transition: all 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn-predict:hover {
-            background: #1b4332;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(45, 106, 79, 0.2);
-        }
-
-        .section-title {
-            color: #1b4332;
-            font-weight: 700;
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 4px;
-            background: #2d6a4f;
-            border-radius: 2px;
-        }
-
-        .result-box {
-            background: #b7e4c7;
-            color: #1b4332;
-            padding: 20px;
-            border-radius: 18px;
-            font-size: 1.2rem;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Mobile Optimization */
-        @media (max-width: 768px) {
-            .premium-card {
-                padding: 25px 20px;
-                border-radius: 16px;
-            }
-
-            .section-title {
-                font-size: 1.5rem;
-            }
-
-            .container {
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-
-            .btn-predict {
-                padding: 12px;
-                font-size: 1rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'crop_app/css/main.css' %}">
 </head>
 
 <body>
 
-    {% include "user/user_header.html" %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-seedling me-2"></i>SmartCrop
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#prediction">Try Prediction</a></li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="/login/" class="btn btn-outline-success px-4 py-2"
+                            style="border-radius: 20px;">Login</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a href="/register/" class="btn btn-success px-4 py-2" style="border-radius: 20px;">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <div class="container mt-5 mb-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-
-                <div class="premium-card">
-                    <h2 class="text-center section-title">Soil & Climate Analysis</h2>
-                    <p class="text-center text-muted mb-5">Provide the latest metrics from your farm for high-accuracy
-                        recommendation.</p>
-
-                    <form method="post" action="/predict/">
-                        {% csrf_token %}
-
-                        {% if error %}
-                        <div class="alert alert-danger border-0 shadow-sm mb-4"
-                            style="border-radius: 12px; font-weight: 600;">
-                            {{ error }}
-                        </div>
-                        {% endif %}
-
-                        <div class="row g-4">
-                            <!-- Nutrients -->
-                            <div class="col-12">
-                                <h5 class="mb-4" style="color: #2d6a4f; opacity: 0.8">🧬 Soil Nutrients</h5>
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Nitrogen (N)</label>
-                                        <input type="number" step="any" name="N" class="form-control" required
-                                            placeholder="0-140" value="{{ values.N }}">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Phosphorus (P)</label>
-                                        <input type="number" step="any" name="P" class="form-control" required
-                                            placeholder="0-145" value="{{ values.P }}">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Potassium (K)</label>
-                                        <input type="number" step="any" name="K" class="form-control" required
-                                            placeholder="0-205" value="{{ values.K }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="my-4 opacity-50">
-
-                            <!-- Environment -->
-                            <div class="col-12">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="mb-0" style="color: #2d6a4f; opacity: 0.8">🌍 environmental factors</h5>
-                                    <button type="button" id="getWeatherBtn" class="btn btn-sm btn-outline-success"
-                                        style="border-radius: 10px; font-weight: 600;">
-                                        📍 Auto-fill from Location
-                                    </button>
-                                </div>
-                                <div id="weatherStatus" class="text-muted mb-3 d-none" style="font-size: 0.85rem;">
-                                </div>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Temperature (°C)</label>
-                                        <input type="number" step="any" name="temperature" id="id_temp"
-                                            class="form-control" required placeholder="Ex: 25.5"
-                                            value="{{ values.temperature }}">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Humidity (%)</label>
-                                        <input type="number" step="any" name="humidity" id="id_hum" class="form-control"
-                                            required placeholder="Ex: 82" value="{{ values.humidity }}">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Soil pH</label>
-                                        <input type="number" step="any" name="ph" class="form-control" required
-                                            placeholder="Ex: 6.5" value="{{ values.ph }}">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Rainfall (mm)</label>
-                                        <input type="number" step="any" name="rainfall" id="id_rain"
-                                            class="form-control" required placeholder="Ex: 200"
-                                            value="{{ values.rainfall }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <script>
-                            document.getElementById('getWeatherBtn').addEventListener('click', function () {
-                                const status = document.getElementById('weatherStatus');
-                                status.classList.remove('d-none');
-                                status.textContent = '🛰️ Detecting location...';
-
-                                if (navigator.geolocation) {
-                                    navigator.geolocation.getCurrentPosition(function (position) {
-                                        const lat = position.coords.latitude;
-                                        const lon = position.coords.longitude;
-                                        status.textContent = '🌦️ Fetching live weather data...';
-
-                                        // Open-Meteo API (No key required)
-                                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m,precipitation&timezone=auto`)
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                const temp = data.current_weather.temperature;
-                                                const hum = data.hourly.relativehumidity_2m[0];
-                                                const rain = data.hourly.precipitation[0] * 10; // Simple estimation for daily rainfall
-
-                                                document.getElementById('id_temp').value = temp;
-                                                document.getElementById('id_hum').value = hum;
-                                                document.getElementById('id_rain').value = rain;
-
-                                                status.textContent = '✅ Weather data applied successfully!';
-                                                status.classList.add('text-success');
-                                            })
-                                            .catch(error => {
-                                                status.textContent = '❌ Failed to fetch weather data.';
-                                                status.classList.add('text-danger');
-                                            });
-                                    }, function () {
-                                        status.textContent = '❌ Location access denied.';
-                                        status.classList.add('text-danger');
-                                    });
-                                } else {
-                                    status.textContent = '❌ Geolocation not supported by browser.';
-                                }
-                            });
-                        </script>
-
-                        <div class="d-grid mt-5">
-                            <button type="submit" class="btn btn-predict">
-                                Analyze & Recommend Crop
-                            </button>
-                        </div>
-                    </form>
-
-                    {% if result %}
-                    <div class="result-box text-center mt-5">
-                        🌱 Suggested Crop: <strong>{{ result|title }}</strong>
+    <!-- Hero Section -->
+    <section id="home" class="hero-section d-flex align-items-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h1 class="hero-title">AI-Powered Crop Recommendation System</h1>
+                    <p class="hero-subtitle">Optimize your harvest with intelligence. Get data-driven crop suggestions
+                        based on your soil nutrients and local climate conditions.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="#prediction" class="btn btn-hero btn-primary-agri">Try Prediction</a>
+                        <a href="/login/" class="btn btn-hero btn-outline-light">Login to Dashboard</a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <div class="d-flex justify-content-center gap-3 mt-4">
-                        <a href="/crop-cycle/?crop={{ result }}&session_id={{ session_id }}"
-                            class="btn btn-success px-4 py-2" style="border-radius: 12px; font-weight: 600;">
-                            Start Growing Cycle
-                        </a>
+    <!-- Features Section -->
+    <section id="features" class="section-padding bg-white">
+        <div class="container text-center">
+            <span class="section-tag">Features</span>
+            <h2 class="section-title">Intelligent Solutions for Modern Farming</h2>
+            <div class="row g-4 text-start">
+                <div class="col-md-3">
+                    <div class="glass-card h-100 p-4">
+                        <div class="feature-icon"><i class="fas fa-microscope"></i></div>
+                        <h4>Soil Analysis</h4>
+                        <p class="text-muted">In-depth analysis of Nitrogen, Phosphorus, and Potassium levels in your
+                            soil.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card h-100 p-4">
+                        <div class="feature-icon"><i class="fas fa-cloud-sun-rain"></i></div>
+                        <h4>Climate Data</h4>
+                        <p class="text-muted">Real-time weather factors including temperature, humidity, and rainfall
+                            integration.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card h-100 p-4">
+                        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                        <h4>AI Insights</h4>
+                        <p class="text-muted">State-of-the-art machine learning models trained on vast agricultural
+                            datasets.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card h-100 p-4">
+                        <div class="feature-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                        <h4>Smart Assist</h4>
+                        <p class="text-muted">Personalized guidance to ensure the best yield for your specific farm
+                            conditions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="section-padding" style="background: #f1f5f3;">
+        <div class="container text-center">
+            <span class="section-tag">Process</span>
+            <h2 class="section-title">How It Works</h2>
+            <div class="row g-5">
+                <div class="col-md-4">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <i class="fas fa-edit fa-3x mb-4 text-success"></i>
+                        <h4>Input Data</h4>
+                        <p class="text-muted">Enter your soil nutrients and environmental parameters manually or
+                            auto-fill.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <i class="fas fa-sync-alt fa-3x mb-4 text-success rotating"></i>
+                        <h4>AI Analysis</h4>
+                        <p class="text-muted">Our advanced algorithm processes your data against thousands of data
+                            points.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <i class="fas fa-check-circle fa-3x mb-4 text-success"></i>
+                        <h4>Recommendation</h4>
+                        <p class="text-muted">Get the most suitable crop recommendation for your farm immediately.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Crop Showcase Section -->
+    <section class="section-padding bg-white">
+        <div class="container text-center">
+            <span class="section-tag">Crops</span>
+            <h2 class="section-title">Our Recommended Crops</h2>
+            <div class="row g-4">
+                <div class="col-md-4 col-lg-2.4">
+                    <div class="crop-card">
+                        <img src="https://images.unsplash.com/photo-1536630596251-b12ba2dd9f92?auto=format&fit=crop&q=80&w=400"
+                            class="crop-img" alt="Rice">
+                        <div class="crop-overlay">
+                            <h4>Rice</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2.4">
+                    <div class="crop-card">
+                        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400"
+                            class="crop-img" alt="Wheat">
+                        <div class="crop-overlay">
+                            <h4>Wheat</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2.4">
+                    <div class="crop-card">
+                        <img src="https://images.unsplash.com/photo-1551727041-5b347d65b633?auto=format&fit=crop&q=80&w=400"
+                            class="crop-img" alt="Maize">
+                        <div class="crop-overlay">
+                            <h4>Maize</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2.4">
+                    <div class="crop-card">
+                        <img src="https://images.unsplash.com/photo-1594904351111-a072f80b1a71?auto=format&fit=crop&q=80&w=400"
+                            class="crop-img" alt="Cotton">
+                        <div class="crop-overlay">
+                            <h4>Cotton</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-2.4">
+                    <div class="crop-card">
+                        <img src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&q=80&w=400"
+                            class="crop-img" alt="Sugarcane">
+                        <div class="crop-overlay">
+                            <h4>Sugarcane</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prediction Form Section -->
+    <section id="prediction" class="section-padding" style="background: linear-gradient(#fff, #f8faf9);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-tag">Try Simple Prediction</span>
+                <h2 class="section-title">Start Your Analysis</h2>
+            </div>
+
+            <div class="glass-card prediction-card">
+                <form method="post" action="/predict/">
+                    {% csrf_token %}
+
+                    {% if error %}
+                    <div class="alert alert-danger border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
                     </div>
                     {% endif %}
 
-                </div>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3"><i class="fas fa-vial me-2 text-success"></i>Soil Nutrients</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-600">Nitrogen (N)</label>
+                            <div class="agri-input-group">
+                                <i class="fas fa-atom"></i>
+                                <input type="number" step="any" name="N" class="form-control" required
+                                    placeholder="0-140" value="{{ values.N }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-600">Phosphorus (P)</label>
+                            <div class="agri-input-group">
+                                <i class="fas fa-vial-circle-check"></i>
+                                <input type="number" step="any" name="P" class="form-control" required
+                                    placeholder="0-145" value="{{ values.P }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-600">Potassium (K)</label>
+                            <div class="agri-input-group">
+                                <i class="fas fa-flask"></i>
+                                <input type="number" step="any" name="K" class="form-control" required
+                                    placeholder="0-205" value="{{ values.K }}">
+                            </div>
+                        </div>
 
+                        <div class="col-12 mt-5">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0"><i class="fas fa-cloud-sun me-2 text-success"></i>Environment
+                                </h5>
+                                <button type="button" id="getWeatherBtn" class="btn btn-sm btn-outline-success"
+                                    style="border-radius: 20px;">
+                                    <i class="fas fa-location-arrow me-2"></i>Auto-fill Location
+                                </button>
+                            </div>
+                            <div id="weatherStatus" class="small text-muted mb-3 d-none"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Temperature (°C)</label>
+                            <div class="agri-input-group">
+                                <i class="fas fa-temperature-high"></i>
+                                <input type="number" step="any" name="temperature" id="id_temp" class="form-control"
+                                    required placeholder="Ex: 25.5" value="{{ values.temperature }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Humidity (%)</label>
+                            <div class="agri-input-group">
+                                <i class="fas fa-droplet"></i>
+                                <input type="number" step="any" name="humidity" id="id_hum" class="form-control"
+                                    required placeholder="Ex: 82" value="{{ values.humidity }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Soil pH</label>
+                            <div class="agri-input-group">
+                                <i class="fas fa-p"></i>
+                                <input type="number" step="any" name="ph" class="form-control" required
+                                    placeholder="Ex: 6.5" value="{{ values.ph }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Rainfall (mm)</label>
+                            <div class="agri-input-group">
+                                <i class="fas fa-cloud-rain"></i>
+                                <input type="number" step="any" name="rainfall" id="id_rain" class="form-control"
+                                    required placeholder="Ex: 200" value="{{ values.rainfall }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <button type="submit" class="btn btn-hero btn-primary-agri w-100 py-3">
+                            <i class="fas fa-magic me-2"></i>Analyze & Recommend Crop
+                        </button>
+                    </div>
+                </form>
+
+                {% if result %}
+                <div class="mt-5 p-4 text-center"
+                    style="background: rgba(46, 125, 50, 0.1); border-radius: 15px; border-left: 5px solid var(--primary-green);">
+                    <h4 class="mb-3 text-success"><i class="fas fa-star me-2"></i>Best Crop for You</h4>
+                    <div class="display-6 fw-bold mb-4" style="color: var(--dark-green);">{{ result|title }}</div>
+                    <a href="/crop-cycle/?crop={{ result }}&session_id={{ session_id }}"
+                        class="btn btn-success px-5 py-2" style="border-radius: 20px; font-weight: 600;">
+                        Start Growing Cycle <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
-    </div>
+    </section>
 
-    <footer class="text-center py-4 text-muted mt-auto">
-        <small>© 2026 Smart Agriculture Platform • All Rights Reserved</small>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <a href="#" class="footer-logo"><i class="fas fa-seedling me-2"></i>SmartCrop</a>
+                    <p class="text-muted">A modern AI-powered platform designed to empower farmers with data-driven
+                        insights for better crop selection and sustainable agriculture.</p>
+                </div>
+                <div class="col-lg-2 ms-lg-auto">
+                    <h5 class="fw-bold mb-4">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#home" class="text-decoration-none text-muted">Home</a></li>
+                        <li class="mb-2"><a href="#features" class="text-decoration-none text-muted">Features</a></li>
+                        <li class="mb-2"><a href="#how-it-works" class="text-decoration-none text-muted">How It
+                                Works</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-4">Developed By</h5>
+                    <p class="mb-1 fw-bold text-dark">Mathews Paul</p>
+                    <p class="text-muted mb-3">DePaul Institute of Science and Technology (DIST)</p>
+                    <div class="d-flex gap-3 fs-5">
+                        <a href="https://github.com/mathewspaul003" class="text-success"><i
+                                class="fab fa-github"></i></a>
+                        <a href="#" class="text-success"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-success"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-5 opacity-10">
+            <div class="text-center text-muted">
+                <small>© 2026 Smart Crop Recommendation System • All Rights Reserved</small>
+            </div>
+        </div>
     </footer>
 
     {% include "chatbot/chatbot.html" %}
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('getWeatherBtn').addEventListener('click', function () {
+            const status = document.getElementById('weatherStatus');
+            status.classList.remove('d-none');
+            status.textContent = '🛰️ Detecting location...';
+            status.className = 'small text-muted mb-3';
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    status.textContent = '🌦️ Fetching live weather data...';
+
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m,precipitation&timezone=auto`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const temp = data.current_weather.temperature;
+                            const hum = data.hourly.relativehumidity_2m[0];
+                            const rain = data.hourly.precipitation[0] * 10;
+
+                            document.getElementById('id_temp').value = temp;
+                            document.getElementById('id_hum').value = hum;
+                            document.getElementById('id_rain').value = rain;
+
+                            status.textContent = '✅ Weather data applied successfully!';
+                            status.className = 'small text-success mb-3';
+                        })
+                        .catch(error => {
+                            status.textContent = '❌ Failed to fetch weather data.';
+                            status.className = 'small text-danger mb-3';
+                        });
+                }, function () {
+                    status.textContent = '❌ Location access denied.';
+                    status.className = 'small text-danger mb-3';
+                });
+            } else {
+                status.textContent = '❌ Geolocation not supported.';
+                status.className = 'small text-danger mb-3';
+            }
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
