@@ -38,4 +38,5 @@ urlpatterns = [
     path("admin-panel/users/<int:user_id>/crops/", views.admin_user_crops, name="admin_user_crops"),
 
     path("my-sessions/delete/<int:session_id>/", views.delete_session, name="delete_session"),
+    path("profile/", views.profile_view, name="profile_view"),
 ]

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils import timezone
 import datetime, json
 from ..models import CropDetails, CropCycle, UserCropSession, UserCycleTask, Feedback
@@ -57,13 +57,14 @@ def admin_users_view(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect("/login/")
 
-    users = User.objects.filter(is_staff=False).order_by('-date_joined')
+    users = User.objects.filter(is_staff=False).annotate(
+        session_count=Count('usercropsession')
+    ).order_by('-date_joined')
 
     # Annotate each user with their session count for the table
     user_data = []
     for u in users:
-        session_count = UserCropSession.objects.filter(user=u).count()
-        user_data.append({"user": u, "session_count": session_count})
+        user_data.append({"user": u, "session_count": u.session_count})
 
     return render(request, "admin_panel/view_users.html", {"user_data": user_data})
 
@@ -75,12 +76,15 @@ def admin_user_crops(request, user_id):
         return redirect("/login/")
 
     target_user = User.objects.get(id=user_id)
-    sessions = UserCropSession.objects.filter(user=target_user).order_by("-created_at")
+    sessions = UserCropSession.objects.filter(user=target_user).annotate(
+        total_tasks=Count('usercycletask'),
+        completed_tasks=Count('usercycletask', filter=Q(usercycletask__is_completed=True))
+    ).order_by("-created_at")
 
     session_data = []
     for s in sessions:
-        total = UserCycleTask.objects.filter(session=s).count()
-        done = UserCycleTask.objects.filter(session=s, is_completed=True).count()
+        total = s.total_tasks
+        done = s.completed_tasks
         is_manual = (s.N == 0 and s.P == 0 and s.K == 0)
         session_data.append({
             "session": s,

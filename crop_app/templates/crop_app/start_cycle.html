@@ -171,14 +171,18 @@
                     {% endif %}
 
                     <h4 class="fw-bold mb-1">{{ task.crop_cycle.stage_name }}</h4>
-                    <p class="text-muted small mb-0">Timeline: Day {{ task.crop_cycle.start_day }} - {{task.crop_cycle.end_day }}</p>
+                    <p class="text-muted small mb-0">Timeline: Day {{ task.crop_cycle.start_day }} -
+                        {{task.crop_cycle.end_day }}</p>
                 </div>
 
                 {% if not task.is_completed %}
                 {% if task.id == next_task_id %}
-                <a href="/mark-done/{{ task.id }}/" class="btn btn-mark">
-                    Mark Done
-                </a>
+                <form action="/mark-done/{{ task.id }}/" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-mark border-0">
+                        Mark Done
+                    </button>
+                </form>
                 {% else %}
                 <button class="btn btn-secondary rounded-pill fw-bold" disabled
                     style="opacity: 0.6; padding: 10px 20px;">

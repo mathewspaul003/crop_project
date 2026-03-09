@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from io import BytesIO
-from fpdf import FPDF
+from django.db.models import Count, Q
 import numpy as np
 import joblib
 import os
@@ -161,9 +161,19 @@ def start_cycle(request):
         crop = session.crop_name
         stages = CropCycle.objects.filter(crop_name__iexact=crop).order_by("start_day")
 
-        for stage in stages:
-            task, _ = UserCycleTask.objects.get_or_create(session=session, crop_cycle=stage)
-            tasks.append(task)
+        # Optimization: Fetch existing tasks efficiently
+        existing_tasks = UserCycleTask.objects.filter(session=session).select_related('crop_cycle')
+        existing_stage_ids = set(existing_tasks.values_list('crop_cycle_id', flat=True))
+        
+        missing_stages = [s for s in stages if s.id not in existing_stage_ids]
+        if missing_stages:
+            UserCycleTask.objects.bulk_create([
+                UserCycleTask(session=session, crop_cycle=s) for s in missing_stages
+            ])
+            # Re-fetch after bulk create
+            tasks = list(UserCycleTask.objects.filter(session=session).select_related('crop_cycle').order_by("crop_cycle__start_day"))
+        else:
+            tasks = list(existing_tasks.order_by("crop_cycle__start_day"))
 
         days_passed = (timezone.now() - session.created_at).days + 1
 
@@ -265,12 +275,17 @@ def my_sessions(request):
     if request.user.is_staff:
         return redirect("/admin-panel/dashboard/")
 
-    sessions = UserCropSession.objects.filter(user=request.user).order_by("-created_at")
+    sessions = UserCropSession.objects.filter(user=request.user).annotate(
+        total_tasks=Count('usercycletask'),
+        completed_tasks=Count('usercycletask', filter=Q(usercycletask__is_completed=True))
+    ).order_by("-created_at")
+    
     session_data = []
     for s in sessions:
-        total = UserCycleTask.objects.filter(session=s).count()
-        done = UserCycleTask.objects.filter(session=s, is_completed=True).count()
-        session_data.append({"session": s, "is_completed": (total > 0 and total == done)})
+        session_data.append({
+            "session": s, 
+            "is_completed": (s.total_tasks > 0 and s.total_tasks == s.completed_tasks)
+        })
 
     return render(request, "user/my_sessions.html", {"session_data": session_data})
 
@@ -288,11 +303,15 @@ def all_tasks(request):
     if request.user.is_staff:
         return redirect("/admin-panel/dashboard/")
 
-    sessions = UserCropSession.objects.filter(user=request.user).order_by("-created_at")
+    sessions = UserCropSession.objects.filter(user=request.user).annotate(
+        total_tasks=Count('usercycletask'),
+        completed_tasks=Count('usercycletask', filter=Q(usercycletask__is_completed=True))
+    ).order_by("-created_at")
+
     task_data = []
     for s in sessions:
-        total = UserCycleTask.objects.filter(session=s).count()
-        done = UserCycleTask.objects.filter(session=s, is_completed=True).count()
+        total = s.total_tasks
+        done = s.completed_tasks
         status = "Completed" if (total > 0 and total == done) else "In Progress" if total > 0 else "Not Started"
         task_data.append({"session": s, "total": total, "completed": done, "status": status})
 
@@ -339,32 +358,22 @@ def download_report_pdf(request):
     tasks = UserCycleTask.objects.filter(session=session).order_by("crop_cycle__start_day")
     is_manual = (session.N == 0 and session.P == 0 and session.K == 0)
 
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, "Smart Agriculture Crop Report", ln=True, align="C")
-    pdf.ln(5)
-    pdf.set_font("Arial", "", 12)
-    user_name = session.user.first_name if session.user.first_name else session.user.username
-    pdf.cell(0, 8, f"User: {user_name}", ln=True)
-    pdf.cell(0, 8, f"Crop: {session.crop_name.title()}", ln=True)
-    pdf.ln(5)
+    from django.template.loader import render_to_string
+    from xhtml2pdf import pisa
 
-    if not is_manual:
-        pdf.set_font("Arial", "B", 14)
-        pdf.cell(0, 10, "Soil Metrics", ln=True)
-        pdf.set_font("Arial", "", 11)
-        pdf.cell(0, 8, f"N: {session.N}, P: {session.P}, K: {session.K}", ln=True)
+    context = {
+        "session": session,
+        "tasks": tasks,
+        "is_manual": is_manual,
+    }
     
-    pdf.ln(5)
-    pdf.set_font("Arial", "B", 14)
-    pdf.cell(0, 10, "Stages", ln=True)
-    pdf.set_font("Arial", "", 10)
-    for task in tasks:
-        pdf.cell(0, 8, f"{task.crop_cycle.stage_name}: {'Done' if task.is_completed else 'Pending'}", ln=True)
-
+    html = render_to_string("crop_app/report_pdf.html", context)
     buffer = BytesIO()
-    pdf.output(buffer)
+    pisa_status = pisa.CreatePDF(html, dest=buffer)
+
+    if pisa_status.err:
+        return HttpResponse("Error generating PDF", status=500)
+
     buffer.seek(0)
     response = HttpResponse(buffer.getvalue(), content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{session.crop_name}_report.pdf"'
@@ -390,3 +399,26 @@ def delete_session(request, session_id):
     from django.contrib import messages
     messages.success(request, "Deleted successfully.")
     return redirect("/my-sessions/")
+
+
+@login_required
+def profile_view(request):
+    if request.user.is_staff:
+        return redirect("/admin-panel/dashboard/")
+    
+    if request.method == "POST":
+        email = request.POST.get("email")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        
+        user = request.user
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        
+        from django.contrib import messages
+        messages.success(request, "✅ Profile updated successfully!")
+        return redirect("/profile/")
+        
+    return render(request, "user/profile.html")
