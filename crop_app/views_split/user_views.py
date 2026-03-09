@@ -377,6 +377,8 @@ def download_report_pdf(request):
     buffer.seek(0)
     response = HttpResponse(buffer.getvalue(), content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{session.crop_name}_report.pdf"'
+    response["Content-Transfer-Encoding"] = "binary"
+    response["Accept-Ranges"] = "bytes"
     return response
 
 
