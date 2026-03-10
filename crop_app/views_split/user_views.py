@@ -358,22 +358,114 @@ def download_report_pdf(request):
     tasks = UserCycleTask.objects.filter(session=session).order_by("crop_cycle__start_day")
     is_manual = (session.N == 0 and session.P == 0 and session.K == 0)
 
-    from django.template.loader import render_to_string
-    from xhtml2pdf import pisa
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib import colors
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
-    context = {
-        "session": session,
-        "tasks": tasks,
-        "is_manual": is_manual,
-    }
-    
-    html = render_to_string("crop_app/report_pdf.html", context)
     buffer = BytesIO()
-    pisa_status = pisa.CreatePDF(html, dest=buffer)
+    doc = SimpleDocTemplate(buffer, pagesize=A4,
+                            rightMargin=2*cm, leftMargin=2*cm,
+                            topMargin=2*cm, bottomMargin=2*cm)
 
-    if pisa_status.err:
-        return HttpResponse("Error generating PDF", status=500)
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle('Title', parent=styles['Title'],
+                                  fontSize=20, textColor=colors.HexColor('#1a6b3c'),
+                                  spaceAfter=6, alignment=TA_CENTER)
+    subtitle_style = ParagraphStyle('Subtitle', parent=styles['Normal'],
+                                     fontSize=11, textColor=colors.HexColor('#555555'),
+                                     spaceAfter=16, alignment=TA_CENTER)
+    section_style = ParagraphStyle('Section', parent=styles['Heading2'],
+                                    fontSize=13, textColor=colors.HexColor('#2d5a27'),
+                                    spaceBefore=12, spaceAfter=6)
+    body_style = ParagraphStyle('Body', parent=styles['Normal'],
+                                 fontSize=10, leading=14, textColor=colors.HexColor('#333333'))
 
+    story = []
+
+    # Title
+    story.append(Paragraph("🌾 Crop Cycle Report", title_style))
+    story.append(Paragraph(f"Generated for: {request.user.first_name or request.user.username}", subtitle_style))
+    story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#1a6b3c')))
+    story.append(Spacer(1, 12))
+
+    # Crop Info
+    story.append(Paragraph("Crop Information", section_style))
+    crop_data = [
+        ["Crop Name", session.crop_name.title()],
+        ["Session Type", "Manual Entry" if is_manual else "AI Predicted"],
+        ["Started On", session.created_at.strftime("%d %b %Y")],
+    ]
+    if not is_manual:
+        crop_data += [
+            ["Nitrogen (N)", f"{session.N}"],
+            ["Phosphorus (P)", f"{session.P}"],
+            ["Potassium (K)", f"{session.K}"],
+            ["Temperature", f"{session.temperature} °C"],
+            ["Humidity", f"{session.humidity} %"],
+            ["Soil pH", f"{session.ph}"],
+            ["Rainfall", f"{session.rainfall} mm"],
+        ]
+
+    info_table = Table(crop_data, colWidths=[5*cm, 11*cm])
+    info_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#e8f5e9')),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#1a6b3c')),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('ROWBACKGROUNDS', (0, 0), (-1, -1), [colors.white, colors.HexColor('#f1f8f1')]),
+        ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor('#cccccc')),
+        ('GRID', (0, 0), (-1, -1), 0.25, colors.HexColor('#dddddd')),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+    ]))
+    story.append(info_table)
+    story.append(Spacer(1, 16))
+
+    # Task Table
+    story.append(Paragraph("Growth Stage Progress", section_style))
+    task_header = [["Stage", "Days", "Status"]]
+    task_rows = []
+    for t in tasks:
+        status = "✔ Completed" if t.is_completed else "○ Pending"
+        task_rows.append([
+            t.crop_cycle.stage_name,
+            f"Day {t.crop_cycle.start_day} – {t.crop_cycle.end_day}",
+            status
+        ])
+
+    if task_rows:
+        task_data = task_header + task_rows
+        task_table = Table(task_data, colWidths=[7*cm, 4*cm, 5*cm])
+        task_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1a6b3c')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f1f8f1')]),
+            ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor('#cccccc')),
+            ('GRID', (0, 0), (-1, -1), 0.25, colors.HexColor('#dddddd')),
+            ('TOPPADDING', (0, 0), (-1, -1), 7),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 7),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('ALIGN', (1, 0), (1, -1), 'CENTER'),
+            ('ALIGN', (2, 0), (2, -1), 'CENTER'),
+        ]))
+        story.append(task_table)
+    else:
+        story.append(Paragraph("No growth stages found for this session.", body_style))
+
+    story.append(Spacer(1, 20))
+    story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor('#cccccc')))
+    story.append(Spacer(1, 6))
+    story.append(Paragraph("Generated by Agri Intel Hub · Smart Agriculture Platform", subtitle_style))
+
+    doc.build(story)
     buffer.seek(0)
     response = HttpResponse(buffer.getvalue(), content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{session.crop_name}_report.pdf"'
