@@ -11,13 +11,25 @@ import os
 from django.conf import settings
 from ..models import CropDetails, CropCycle, UserCropSession, UserCycleTask, Feedback
 
-# ✅ Load ML Model (Relative to codebase)
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "crop_model.pkl")
-ENCODER_PATH = os.path.join(BASE_DIR, "label_encoder.pkl")
+# ✅ Lazy Load ML Model Helper
+_ML_MODEL = None
+_ML_ENCODER = None
 
-model = joblib.load(MODEL_PATH)
-le = joblib.load(ENCODER_PATH)
+def get_ml_resources():
+    global _ML_MODEL, _ML_ENCODER
+    if _ML_MODEL is None or _ML_ENCODER is None:
+        BASE_DIR_APP = os.path.dirname(os.path.dirname(__file__))
+        MODEL_PATH = os.path.join(BASE_DIR_APP, "crop_model.pkl")
+        ENCODER_PATH = os.path.join(BASE_DIR_APP, "label_encoder.pkl")
+        
+        try:
+            import joblib
+            _ML_MODEL = joblib.load(MODEL_PATH)
+            _ML_ENCODER = joblib.load(ENCODER_PATH)
+        except Exception as e:
+            print(f"❌ Error loading ML model: {e}")
+            return None, None
+    return _ML_MODEL, _ML_ENCODER
 
 def home(request):
     # ✅ Block Admin from user pages
@@ -72,6 +84,14 @@ def home(request):
                 float(values["ph"]),
                 float(values["rainfall"]),
             ]])
+
+            # ✅ Lazy load model
+            model, le = get_ml_resources()
+            if model is None or le is None:
+                return render(request, "crop_app/home.html", {
+                    "error": "❌ Machine Learning model is temporarily unavailable. Please try again later.",
+                    "values": values
+                })
 
             prediction = model.predict(user_input)
             result = le.inverse_transform(prediction)[0]

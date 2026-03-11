@@ -31,7 +31,7 @@ fpdf2==2.8.3
 python-dotenv==1.0.1
 PyYAML==6.0.3
 requests==2.32.5
-scikit-learn==1.6.1
+scikit-learn==1.8.0
 scipy==1.15.2
 six==1.17.0
 sqlparse==0.5.5
