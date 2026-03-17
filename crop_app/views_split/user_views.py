@@ -39,6 +39,9 @@ def home(request):
     result = None
     values = {}
     session_id = None
+    top_crops = []
+    top_probability = None
+    all_probabilities = []
 
     if request.method == "POST":
         values = {
@@ -93,8 +96,31 @@ def home(request):
                     "values": values
                 })
 
+            with open(r"e:\Mathews\crop\crop_project\debug.txt", "a") as f:
+                f.write(f"USER INPUT: {user_input}\n")
+                
             prediction = model.predict(user_input)
             result = le.inverse_transform(prediction)[0]
+
+            # ✅ Get crop probabilities for chart/display
+            if hasattr(model, 'predict_proba'):
+                probabilities = model.predict_proba(user_input)[0]
+                class_names = le.classes_
+                
+                prob_list = [
+                    {'crop': str(c).title(), 'probability': round(float(p) * 100, 1)}
+                    for c, p in zip(class_names, probabilities)
+                ]
+                prob_list.sort(key=lambda x: x['probability'], reverse=True)
+                
+                all_probabilities = [p for p in prob_list if p['probability'] > 1.0]
+                top_probability = prob_list[0]['probability']
+                
+                # Keep top 4 for backward compatibility with older template code
+                top_crops = [{"name": p["crop"], "prob": p["probability"]} for p in prob_list[:4]]
+            else:
+                top_probability = 100.0
+                top_crops = [{"name": result.title(), "prob": 100.0}]
 
             # ✅ Only Create session if user is LOGGED IN
             if request.user.is_authenticated:
@@ -121,8 +147,11 @@ def home(request):
         request,
         template_name,
         {
-            "result": result, 
-            "values": values, 
+            "result": result,
+            "top_crops": top_crops,
+            "top_probability": top_probability,
+            "all_probabilities": all_probabilities,
+            "values": values,
             "session_id": session_id,
             "chatbot_crop": result
         }
@@ -134,13 +163,27 @@ def user_dashboard(request):
     if request.user.is_staff:
         return redirect("/admin-panel/dashboard/")
 
-    overdue_tasks_count = UserCycleTask.objects.filter(
+    # Stats
+    total_predictions = UserCropSession.objects.filter(user=request.user).count()
+
+    pending_tasks_count = UserCycleTask.objects.filter(
         session__user=request.user,
         is_completed=False
     ).count()
 
+    completed_tasks_count = UserCycleTask.objects.filter(
+        session__user=request.user,
+        is_completed=True
+    ).count()
+
+    # Recent 5 sessions
+    recent_sessions = UserCropSession.objects.filter(user=request.user).order_by("-created_at")[:5]
+
     context = {
-        "overdue_tasks_count": overdue_tasks_count,
+        "total_predictions": total_predictions,
+        "pending_tasks_count": pending_tasks_count,
+        "completed_tasks_count": completed_tasks_count,
+        "recent_sessions": recent_sessions,
     }
     return render(request, "user/dashboard.html", context)
 

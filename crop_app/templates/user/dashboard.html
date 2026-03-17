@@ -5,30 +5,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Smart Agriculture</title>
+    <meta name="description" content="Your personal smart agriculture dashboard — track predictions, crop cycles, and farming insights.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        :root {
+            --primary: #1b4332;
+            --primary-light: #2d6a4f;
+            --accent: #52b788;
+            --accent-light: #74c69d;
+            --gold: #f4a261;
+            --bg: #f0f7f4;
+            --card-bg: #ffffff;
+            --text-muted: #6b7280;
+            --border: rgba(45,106,79,0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: #f0f7f4;
-            color: #1b4332;
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--primary);
+            min-height: 100vh;
         }
 
-        .dashboard-container {
-            padding: 40px 0;
+        /* ── Hero Banner ── */
+        .hero-banner {
+            background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%);
+            padding: 48px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 320px; height: 320px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -80px;
+            width: 400px; height: 400px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero-banner h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .hero-banner p {
+            color: rgba(255,255,255,0.75);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            color: var(--primary-light) !important;
+            font-weight: 700;
+            padding: 14px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-top: 24px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        .hero-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.2);
+            color: var(--primary) !important;
+        }
+        .hero-avatar {
+            width: 100px; height: 100px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+            border: 3px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+        .date-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.9);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        .welcome-header {
-            margin-bottom: 40px;
+        /* ── Stats Cards Overlap ── */
+        .stats-section {
+            margin-top: -40px;
+            position: relative;
+            z-index: 10;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(27,67,50,0.10);
+            border: 1px solid var(--border);
+            transition: all 0.35s ease;
+            height: 100%;
+        }
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(27,67,50,0.16);
+        }
+        .stat-icon {
+            width: 56px; height: 56px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+            margin: 0 auto 14px;
+        }
+        .stat-icon.green  { background: #d1fae5; }
+        .stat-icon.blue   { background: #dbeafe; }
+        .stat-icon.amber  { background: #fef3c7; }
+        .stat-icon.purple { background: #ede9fe; }
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 6px;
         }
 
+        /* ── Section Titles ── */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title-bar {
+            width: 4px; height: 24px;
+            background: linear-gradient(to bottom, var(--accent), var(--primary-light));
+            border-radius: 4px;
+        }
+
+        /* ── Action Cards (Quick Links) ── */
         .action-card {
             background: white;
             border-radius: 20px;
-            padding: 30px;
+            padding: 28px 22px;
             text-align: center;
-            border: 1px solid rgba(45, 106, 79, 0.1);
+            border: 1px solid var(--border);
             transition: all 0.3s ease;
             height: 100%;
             display: flex;
@@ -37,64 +185,205 @@
             align-items: center;
             text-decoration: none;
             color: inherit !important;
+            position: relative;
+            overflow: hidden;
         }
-
+        .action-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), var(--primary-light));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+        .action-card:hover::before { transform: scaleX(1); }
         .action-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(45, 106, 79, 0.1);
-            border-color: #2d6a4f;
+            box-shadow: 0 20px 40px rgba(27,67,50,0.12);
+            border-color: var(--accent);
+        }
+        .action-icon {
+            width: 64px; height: 64px;
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #e8f5ee, #d1fae5);
+            transition: all 0.3s ease;
+        }
+        .action-card:hover .action-icon {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            transform: scale(1.1) rotate(-5deg);
+        }
+        .action-card h5 {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        .action-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
         }
 
-        .icon-box {
-            width: 70px;
-            height: 70px;
-            background: #e8f3ee;
-            border-radius: 18px;
+        /* ── Recent Sessions Table ── */
+        .sessions-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(27,67,50,0.06);
+            overflow: hidden;
+        }
+        .sessions-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            margin-bottom: 20px;
-            transition: background 0.3s;
+            justify-content: space-between;
         }
-
-        .action-card:hover .icon-box {
-            background: #2d6a4f;
+        .sessions-table { margin: 0; }
+        .sessions-table thead th {
+            background: #f8fdf9;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 14px 20px;
+            border: none;
+        }
+        .sessions-table tbody td {
+            padding: 14px 20px;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            border-color: #f0f7f4;
+            color: #374151;
+        }
+        .sessions-table tbody tr {
+            transition: background 0.2s;
+        }
+        .sessions-table tbody tr:hover { background: #f8fdf9; }
+        .crop-pill {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: var(--primary);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .view-btn {
+            background: transparent;
+            border: 1.5px solid var(--accent);
+            color: var(--primary-light);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .view-btn:hover {
+            background: var(--primary-light);
             color: white;
+            border-color: var(--primary-light);
         }
 
-        .card-title {
-            font-weight: 700;
-            font-size: 1.25rem;
-            margin-bottom: 10px;
+        /* ── Alert Banner ── */
+        .alert-pending {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 1.5px solid #f59e0b;
+            border-radius: 16px;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .alert-pending-icon {
+            width: 44px; height: 44px;
+            background: #fef3c7;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
         }
 
-        .card-desc {
-            font-size: 0.95rem;
-            color: #6c757d;
+        /* ── Most Predicted Card ── */
+        .highlight-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 20px;
+            padding: 28px 24px;
+            color: white;
+            box-shadow: 0 8px 30px rgba(27,67,50,0.25);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+        .highlight-card::after {
+            content: '🌾';
+            position: absolute;
+            bottom: -10px; right: 10px;
+            font-size: 6rem;
+            opacity: 0.08;
+        }
+        .highlight-card h6 {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .highlight-card .crop-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+        .highlight-card .crop-sub {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.65);
+            margin-top: 4px;
         }
 
-        /* Mobile Optimization */
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .anim-1 { animation: fadeUp 0.5s ease 0.1s both; }
+        .anim-2 { animation: fadeUp 0.5s ease 0.2s both; }
+        .anim-3 { animation: fadeUp 0.5s ease 0.3s both; }
+        .anim-4 { animation: fadeUp 0.5s ease 0.4s both; }
+        .anim-5 { animation: fadeUp 0.5s ease 0.5s both; }
+
+        /* ── Mobile ── */
         @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 20px 0;
-            }
-
-            .welcome-header h1 {
-                font-size: 1.75rem;
-                padding: 0 15px;
-            }
-
-            .action-card {
-                padding: 20px;
-            }
-
-            .icon-box {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
-            }
+            .hero-banner { padding: 36px 0 70px; }
+            .hero-banner h1 { font-size: 1.6rem; }
+            .hero-avatar { display: none; }
+            .stats-section { margin-top: -30px; }
+            .stat-value { font-size: 1.8rem; }
         }
+
+        /* ── Empty State ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
+        .empty-state p { font-size: 0.9rem; margin: 0; }
+
+        /* counter animation */
+        .count-up { display: inline-block; }
     </style>
 </head>
 
@@ -102,90 +391,189 @@
 
     {% include "user/user_header.html" %}
 
-    <div class="container dashboard-container">
-
-        <div class="welcome-header text-center">
-            <h1 class="fw-bold">Welcome back, {{ user.first_name|default:user.username|title }}! 👋</h1>
-            <p class="text-muted">Manage your farm activities and get intelligent insights.</p>
-        </div>
-
-        {% if overdue_tasks_count > 0 %}
-        <div class="alert alert-warning border-0 shadow-sm mb-5 p-4"
-            style="border-radius: 20px; background: #fffdf2; border-left: 5px solid #ffc107 !important;">
-            <div class="d-flex align-items-center gap-3">
-                <div style="font-size: 2rem;">⏳</div>
-                <div>
-                    <h5 class="fw-bold mb-1">Attention Required</h5>
-                    <p class="mb-0 text-muted">You have **{{ overdue_tasks_count }} pending growth stages** that need
-                        your attention. Check your active cycles to stay on track!</p>
+    <!-- ── Hero Banner ── -->
+    <div class="hero-banner">
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="date-badge">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span id="hero-date"></span>
+                    </div>
+                    <h1>Welcome back,<br>{{ user.first_name|default:user.username|title }}! 👋</h1>
+                    <p>Track your crops, predict harvests, and grow smarter with AI-powered insights.</p>
+                    <a href="/predict/" class="hero-cta">
+                        <i class="fa-solid fa-seedling"></i>
+                        Start Prediction
+                    </a>
                 </div>
-                <a href="/tasks/" class="btn btn-warning ms-auto fw-bold px-4" style="border-radius: 12px;">View
-                    Tasks</a>
+                <div class="col-lg-4 text-end d-none d-lg-block">
+                    <div class="hero-avatar ms-auto">🧑‍🌾</div>
+                </div>
             </div>
         </div>
-        {% endif %}
-
-        <div class="row g-4 justify-content-center">
-            <!-- Predict Crop (FIXED LINK) -->
-            <div class="col-md-4">
-                <a href="/predict/" class="action-card">
-                    <div class="icon-box">🔍</div>
-                    <h3 class="card-title">Predict Crop</h3>
-                    <p class="card-desc">Analyze soil and climate data to find the best crop for your farm.</p>
-                </a>
-            </div>
-
-            <!-- Active Cycles -->
-            <div class="col-md-4">
-                <a href="/tasks/" class="action-card">
-                    <div class="icon-box">🌱</div>
-                    <h3 class="card-title">Track Cycles</h3>
-                    <p class="card-desc">Monitor your ongoing crop growth and get stage-wise advice.</p>
-                </a>
-            </div>
-
-            <!-- Search Database -->
-            <div class="col-md-4">
-                <a href="/crop-search/" class="action-card">
-                    <div class="icon-box">📚</div>
-                    <h3 class="card-title">Search Crop</h3>
-                    <p class="card-desc">Access detailed information and guidance for various crops.</p>
-                </a>
-            </div>
-
-            <!-- Reports -->
-            <div class="col-md-4">
-                <a href="/reports/" class="action-card">
-                    <div class="icon-box">📊</div>
-                    <h3 class="card-title">Reports</h3>
-                    <p class="card-desc">View and download your farming history and analysis reports.</p>
-                </a>
-            </div>
-
-            <!-- My History -->
-            <div class="col-md-4">
-                <a href="/my-sessions/" class="action-card">
-                    <div class="icon-box">📌</div>
-                    <h3 class="card-title">My Sessions</h3>
-                    <p class="card-desc">View all your previous prediction sessions and crop history.</p>
-                </a>
-            </div>
-
-            <!-- Feedback -->
-            <div class="col-md-4">
-                <a href="/feedback/" class="action-card">
-                    <div class="icon-box">💬</div>
-                    <h3 class="card-title">Feedback</h3>
-                    <p class="card-desc">We value your thoughts! Share your experience or suggestions for improvement.
-                    </p>
-                </a>
-            </div>
-        </div>
-
     </div>
+
+    <div class="container">
+
+        <!-- ── Stats Cards ── -->
+        <div class="stats-section">
+            <div class="row g-3">
+                <div class="col-6 col-md-3 anim-1">
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fa-solid fa-chart-simple" style="color:#059669;"></i></div>
+                        <div class="stat-value count-up" data-target="{{ total_predictions }}">0</div>
+                        <div class="stat-label">Total Predictions</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 anim-2">
+                    <div class="stat-card">
+                        <div class="stat-icon amber"><i class="fa-solid fa-clock" style="color:#d97706;"></i></div>
+                        <div class="stat-value count-up" data-target="{{ pending_tasks_count }}">0</div>
+                        <div class="stat-label">Pending Tasks</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 anim-3">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fa-solid fa-circle-check" style="color:#2563eb;"></i></div>
+                        <div class="stat-value count-up" data-target="{{ completed_tasks_count }}">0</div>
+                        <div class="stat-label">Completed Tasks</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 anim-4">
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fa-solid fa-user" style="color:#7c3aed;"></i></div>
+                        <div class="stat-value" style="font-size:1.1rem; padding-top:6px;">
+                            {{ user.date_joined|date:"M Y" }}
+                        </div>
+                        <div class="stat-label">Member Since</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Quick Actions ── -->
+        <div class="section-title anim-4">
+            <div class="section-title-bar"></div>
+            Quick Actions
+        </div>
+        <div class="row g-3 mb-4 anim-4">
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="/predict/" class="action-card">
+                    <div class="action-icon">🔍</div>
+                    <h5>Predict</h5>
+                    <p>AI crop recommendation</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="/tasks/" class="action-card">
+                    <div class="action-icon">🌱</div>
+                    <h5>Track Cycles</h5>
+                    <p>Monitor growth stages</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="/crop-search/" class="action-card">
+                    <div class="action-icon">📚</div>
+                    <h5>Crop Search</h5>
+                    <p>Explore crop database</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="/reports/" class="action-card">
+                    <div class="action-icon">📊</div>
+                    <h5>Reports</h5>
+                    <p>View & download PDFs</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="/my-sessions/" class="action-card">
+                    <div class="action-icon">📌</div>
+                    <h5>My Sessions</h5>
+                    <p>All prediction history</p>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="/profile/" class="action-card">
+                    <div class="action-icon">👤</div>
+                    <h5>Profile</h5>
+                    <p>Edit your account</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- ── Recent Sessions ── -->
+        <div class="section-title anim-5">
+            <div class="section-title-bar"></div>
+            Recent Predictions
+        </div>
+        <div class="sessions-card mb-5 anim-5">
+            <div class="sessions-card-header">
+                <span style="font-weight:700; font-size:0.95rem; color:var(--primary);">🌾 Last 5 Predictions</span>
+                <a href="/my-sessions/" style="font-size:0.85rem; color:var(--primary-light); text-decoration:none; font-weight:600;">View All →</a>
+            </div>
+            {% if recent_sessions %}
+            <div class="table-responsive">
+                <table class="table sessions-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Crop</th>
+                            <th>N · P · K</th>
+                            <th>Temp</th>
+                            <th>pH</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in recent_sessions %}
+                        <tr>
+                            <td style="color:var(--text-muted);">{{ forloop.counter }}</td>
+                            <td><span class="crop-pill">{{ s.crop_name|title }}</span></td>
+                            <td>{{ s.N|floatformat:0 }} · {{ s.P|floatformat:0 }} · {{ s.K|floatformat:0 }}</td>
+                            <td>{{ s.temperature|floatformat:1 }} °C</td>
+                            <td>{{ s.ph|floatformat:1 }}</td>
+                            <td>{{ s.created_at|date:"d M Y" }}</td>
+                            <td>
+                                <a href="/start-cycle/?session_id={{ s.id }}" class="view-btn">Cycle</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="emoji">🌱</div>
+                <p>No predictions yet. <a href="/predict/" style="color:var(--primary-light); font-weight:600;">Make your first prediction!</a></p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div><!-- /container -->
 
     {% include "chatbot/chatbot.html" %}
 
-</body>
+    <script>
+        // Date display
+        const d = new Date();
+        const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('hero-date').textContent = d.toLocaleDateString('en-IN', opts);
 
+        // Count-up animation
+        document.querySelectorAll('.count-up').forEach(el => {
+            const target = parseInt(el.dataset.target) || 0;
+            if (target === 0) { el.textContent = '0'; return; }
+            let current = 0;
+            const step = Math.ceil(target / 40);
+            const timer = setInterval(() => {
+                current = Math.min(current + step, target);
+                el.textContent = current;
+                if (current >= target) clearInterval(timer);
+            }, 30);
+        });
+    </script>
+
+</body>
 </html>

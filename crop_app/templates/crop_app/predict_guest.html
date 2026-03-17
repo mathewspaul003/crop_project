@@ -83,25 +83,69 @@
             border-radius: 2px;
         }
 
-        .result-box {
-            background: #b7e4c7;
-            color: #1b4332;
-            padding: 20px;
-            border-radius: 18px;
-            font-size: 1.2rem;
-            animation: slideIn 0.5s ease;
+        /* ── Results Panel ─────────────────────────────────── */
+        .results-panel {
+            background: linear-gradient(145deg, #f0faf4, #e4f5eb);
+            border: 1.5px solid rgba(45, 106, 79, 0.15);
+            border-radius: 22px;
+            padding: 32px 28px 28px;
+            margin-top: 36px;
+            animation: riseIn 0.6s cubic-bezier(0.22,1,0.36,1);
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0);    }
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .winner-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #2d6a4f, #1b4332);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 6px;
+        }
+
+        .winner-crop-name {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1b4332;
+            letter-spacing: -0.5px;
+        }
+
+        .winner-prob {
+            font-size: 1rem;
+            color: #2d6a4f;
+            font-weight: 600;
+        }
+
+        .chart-wrap {
+            position: relative;
+            height: 200px;
+            margin-top: 24px;
+        }
+
+        .chart-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #555;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .guest-cta {
+            background: linear-gradient(135deg, #f0faf4, #d8f3dc);
+            border: 1.5px solid rgba(45,106,79,0.18);
+            border-radius: 16px;
+            padding: 18px 24px;
+            margin-top: 20px;
+            text-align: center;
         }
 
         /* Inline Header Styles */
@@ -280,9 +324,110 @@
                     </form>
 
                     {% if result %}
-                    <div class="result-box text-center mt-5">
-                        🌱 Suggested Crop: <strong>{{ result|title }}</strong>
+                    <div class="results-panel">
+
+                        <!-- Winner card -->
+                        <div class="text-center mb-4">
+                            <div class="winner-badge">🏆 Top Recommendation</div>
+                            <div class="winner-crop-name">🌱 {{ result|title }}</div>
+                            {% if top_crops %}
+                            <div class="winner-prob">{{ top_crops.0.prob }}% confidence</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Bar chart -->
+                        {% if top_crops %}
+                        <p class="chart-label text-center">Top 4 Crop Confidence Scores</p>
+                        <div class="chart-wrap">
+                            <canvas id="cropChart"></canvas>
+                        </div>
+                        {% endif %}
+
+                        <!-- Guest CTA -->
+                        <div class="guest-cta">
+                            <p class="mb-2" style="color:#1b4332; font-weight:600;">Want to start a full growing cycle?</p>
+                            <a href="/login/" class="btn btn-predict d-inline-block" style="max-width:260px; margin-top:0; padding:10px 28px; font-size:0.95rem;">
+                                Login to Continue →
+                            </a>
+                        </div>
                     </div>
+
+                    {% if top_crops %}
+                    <!-- Chart.js -->
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+                    <script>
+                    (function(){
+                        const raw = {{ top_crops|safe }};
+                        const labels = raw.map(c => c.name);
+                        const data   = raw.map(c => c.prob);
+                        const colors = [
+                            'rgba(27,  67, 50, 0.90)',
+                            'rgba(45, 106, 79, 0.80)',
+                            'rgba(82, 157, 116, 0.70)',
+                            'rgba(149, 213, 178, 0.70)'
+                        ];
+                        const borders = [
+                            '#1b4332','#2d6a4f','#52a174','#74c69d'
+                        ];
+
+                        new Chart(document.getElementById('cropChart'), {
+                            type: 'bar',
+                            data: {
+                                labels,
+                                datasets: [{
+                                    label: 'Confidence (%)',
+                                    data,
+                                    backgroundColor: colors,
+                                    borderColor: borders,
+                                    borderWidth: 2,
+                                    borderRadius: 10,
+                                    borderSkipped: false,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                animation: {
+                                    duration: 900,
+                                    easing: 'easeOutQuart'
+                                },
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: ctx => ` ${ctx.parsed.y.toFixed(1)}% confidence`
+                                        },
+                                        backgroundColor: '#1b4332',
+                                        titleColor: '#d8f3dc',
+                                        bodyColor: '#fff',
+                                        padding: 10,
+                                        cornerRadius: 10
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: {
+                                            color: '#2d6a4f',
+                                            font: { family: 'Outfit', weight: '700', size: 13 }
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        grid: { color: 'rgba(45,106,79,0.08)' },
+                                        ticks: {
+                                            color: '#888',
+                                            font: { family: 'Outfit', size: 11 },
+                                            callback: v => v + '%'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    })();
+                    </script>
+                    {% endif %}
                     {% endif %}
 
                 </div>
