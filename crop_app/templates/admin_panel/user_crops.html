@@ -1,301 +1,213 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ target_user.first_name|default:target_user.username }}'s Crops | Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>{{ target_user.first_name|default:target_user.username }}'s Crops — AgriIntel Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'crop_app/css/admin_base.css' %}">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+        /* User header card */
+        .user-hdr-card { background: white; border-radius: 18px; border: 1px solid var(--border); padding: 22px 26px; display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap }
+        .user-hdr-avatar { width: 50px; height: 50px; border-radius: 13px; background: linear-gradient(135deg, var(--g6), var(--g5)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: white; flex-shrink: 0; letter-spacing: .5px }
+        .user-hdr-name { font-family: 'Instrument Serif', serif; font-size: 22px; letter-spacing: -.4px }
+        .user-hdr-meta { font-size: 13px; color: var(--muted); margin-top: 2px }
+        .sess-count-badge { margin-left: auto; font-size: 13px; font-weight: 600; background: var(--g05); color: var(--g6); border: 1px solid var(--g1); padding: 6px 14px; border-radius: 100px; white-space: nowrap }
 
-        :root {
-            --primary-dark: #1b4332;
-            --accent-green: #2d6a4f;
-            --accent-red: #dc3545;
-            --glass: rgba(255, 255, 255, 0.97);
-        }
+        /* session cards */
+        .session-list { display: flex; flex-direction: column; gap: 16px }
+        .session-card { background: white; border-radius: 16px; border: 1px solid var(--border); padding: 22px; transition: all .2s }
+        .session-card:hover { border-color: var(--g2); box-shadow: 0 4px 20px rgba(45, 106, 79, .07) }
+        .sc-top { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 14px }
+        .sc-crop { font-size: 16px; font-weight: 700; color: var(--ink) }
+        .sc-date { margin-left: auto; font-size: 12px; color: var(--subtle); white-space: nowrap }
 
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #f4f7f6 0%, #e2e8e5 100%);
-            min-height: 100vh;
-        }
+        /* tags */
+        .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 7px; border: 1px solid }
+        .tag-ml { background:#f0fdf4; color:#166534; border-color:#bbf7d0 }
+        .tag-manual { background:#fff7ed; color:#c2410c; border-color:#fed7aa }
+        .tag-done { background:#f0fdf4; color:#166534; border-color:#bbf7d0 }
+        .tag-prog { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe }
+        .tag-idle { background:#f5f5f5; color:#757575; border-color:#e0e0e0 }
+        .tag svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.5; flex-shrink: 0 }
 
-        .admin-nav {
-            background: rgba(220, 53, 69, 0.95) !important;
-            backdrop-filter: blur(10px);
-            padding: 15px 0;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-        }
+        /* metrics grid */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 14px }
+        .metric-box { background: var(--cream); border-radius: 10px; padding: 11px; text-align: center; border: 1px solid var(--border) }
+        .metric-val { font-size: 15px; font-weight: 700; color: var(--ink); display: block }
+        .metric-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-top: 2px }
 
-        .page-title {
-            font-weight: 800;
-            font-size: 2rem;
-            color: var(--primary-dark);
-        }
+        /* manual note */
+        .manual-note { font-size: 13px; color: var(--muted); margin-top: 12px; display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: var(--cream); border-radius: 10px; border: 1px solid var(--border) }
+        .manual-note svg { width: 15px; height: 15px; stroke: var(--subtle); fill: none; stroke-width: 1.8; flex-shrink: 0 }
 
-        .user-info-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px 30px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
+        /* progress bar */
+        .progress-wrap { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border) }
+        .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 7px }
+        .progress-track { height: 8px; background: var(--g05); border-radius: 100px; overflow: hidden; border: 1px solid var(--g1) }
+        .progress-fill { height: 100%; background: var(--g5); border-radius: 100px; transition: width .6s ease }
 
-        .avatar-lg {
-            width: 60px;
-            height: 60px;
-            background: #f0f4f3;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            flex-shrink: 0;
-        }
+        /* empty */
+        .empty-state { background: white; border-radius: 16px; border: 1px solid var(--border); padding: 72px 32px; text-align: center }
+        .empty-icon { width: 64px; height: 64px; border-radius: 18px; background: var(--g05); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px }
+        .empty-icon svg { width: 30px; height: 30px; stroke: var(--g5); fill: none; stroke-width: 1.5 }
+        .empty-title { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 6px }
 
-        .session-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 20px;
-        }
-
-        .session-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.09);
-        }
-
-        .crop-name-badge {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--primary-dark);
-            text-transform: capitalize;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            font-weight: 700;
-        }
-
-        .tag-ml {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .tag-manual {
-            background: #fff3e0;
-            color: #e65100;
-        }
-
-        .tag-done {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .tag-prog {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-
-        .tag-idle {
-            background: #f5f5f5;
-            color: #757575;
-        }
-
-        .metric-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .metric-box {
-            background: #f8faf9;
-            border-radius: 12px;
-            padding: 12px 14px;
-            text-align: center;
-        }
-
-        .metric-box .val {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--primary-dark);
-        }
-
-        .metric-box .lbl {
-            font-size: 0.72rem;
-            color: #6c757d;
-            margin-top: 2px;
-            text-transform: uppercase;
-        }
-
-        .progress-wrap {
-            margin-top: 18px;
-        }
-
-        .progress {
-            border-radius: 10px;
-            height: 10px;
-        }
-
-        .btn-back {
-            background: white;
-            color: var(--primary-dark) !important;
-            padding: 10px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            text-decoration: none;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-
-        .btn-back:hover {
-            background: #f8f9fa;
-            transform: translateX(-5px);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
+        @media(max-width:580px) {
+            .metrics-grid { grid-template-columns: repeat(3, 1fr) }
+            .user-hdr-card { flex-wrap: wrap }
+            .sess-count-badge { margin-left: 0 }
+            .topbar-title { font-size: 18px }
         }
     </style>
 </head>
-
 <body>
 
-    <nav class="navbar admin-nav shadow-sm">
-        <div class="container">
-            <a class="navbar-brand text-white fw-bold" href="/admin-panel/dashboard/">🚜 AGRI ADMIN PRO</a>
-            <div class="d-flex gap-2">
-                <a href="/admin-panel/users/" class="btn-back">← Back to Users</a>
+    <!-- SIDEBAR -->
+    {% include "admin_panel/admin_sidebar.html" %}
+
+    <!-- MAIN -->
+    <div class="main">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="topbar-l">
+                <button class="mob-ham" onclick="openSidebar()">
+                    <span></span><span></span><span></span>
+                </button>
+                <div>
+                    <div class="topbar-title">{{ target_user.first_name|default:"User" }}'s Crops</div>
+                    <div class="topbar-sub">Crop sessions and predictions</div>
+                </div>
+            </div>
+            <div class="topbar-r">
+                <a href="/admin-panel/users/" class="icon-btn" title="Back to users" style="margin-right:10px">
+                    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                </a>
+                <button class="icon-btn" onclick="location.reload()">
+                    <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                </button>
             </div>
         </div>
-    </nav>
 
-    <div class="container py-5">
-
-        <!-- User info header -->
-        <div class="user-info-card">
-            <div class="avatar-lg">👤</div>
-            <div>
-                <div class="page-title mb-0">{{ target_user.first_name|default:"Unnamed User" }}</div>
-                <div class="text-muted" style="font-size:0.9rem;">{{ target_user.username }} &nbsp;·&nbsp; Member since
-                    {{ target_user.date_joined|date:"M d, Y" }}</div>
-            </div>
-            <div class="ms-auto">
-                <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">
-                    {{ session_data|length }} Session{{ session_data|length|pluralize }}
-                </span>
-            </div>
-        </div>
-
-        <!-- Sessions -->
-        {% if session_data %}
-        {% for item in session_data %}
-        <div class="session-card">
-            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                <span class="crop-name-badge">🌾 {{ item.session.crop_name|capfirst }}</span>
-
-                <!-- Type tag -->
-                {% if item.is_manual %}
-                <span class="tag tag-manual">Manual Search</span>
-                {% else %}
-                <span class="tag tag-ml">ML Prediction</span>
-                {% endif %}
-
-                <!-- Status tag -->
-                {% if item.total_tasks == 0 %}
-                <span class="tag tag-idle">Not Started</span>
-                {% elif item.is_completed %}
-                <span class="tag tag-done">✅ Completed</span>
-                {% else %}
-                <span class="tag tag-prog">In Progress</span>
-                {% endif %}
-
-                <span class="ms-auto text-muted" style="font-size:0.82rem;">
-                    {{ item.session.created_at|date:"M d, Y — H:i" }}
-                </span>
+        <!-- CONTENT -->
+        <div class="content">
+            <!-- User Header -->
+            <div class="user-hdr-card">
+                <div class="user-hdr-avatar">{{ target_user.first_name|slice:":1"|upper|default:"?" }}</div>
+                <div>
+                    <div class="user-hdr-name">{{ target_user.first_name|default:"Unnamed User" }}</div>
+                    <div class="user-hdr-meta">{{ target_user.username }} &nbsp;·&nbsp; Member since {{ target_user.date_joined|date:"M d, Y" }}</div>
+                </div>
+                <div class="sess-count-badge">{{ session_data|length }} Session{{ session_data|length|pluralize }}</div>
             </div>
 
-            <!-- Soil & environment metrics (only for ML sessions) -->
-            {% if not item.is_manual %}
-            <div class="metric-grid">
-                <div class="metric-box">
-                    <div class="val">{{ item.session.N }}</div>
-                    <div class="lbl">Nitrogen (N)</div>
-                </div>
-                <div class="metric-box">
-                    <div class="val">{{ item.session.P }}</div>
-                    <div class="lbl">Phosphorus (P)</div>
-                </div>
-                <div class="metric-box">
-                    <div class="val">{{ item.session.K }}</div>
-                    <div class="lbl">Potassium (K)</div>
-                </div>
-                <div class="metric-box">
-                    <div class="val">{{ item.session.temperature }}°C</div>
-                    <div class="lbl">Temperature</div>
-                </div>
-                <div class="metric-box">
-                    <div class="val">{{ item.session.humidity }}%</div>
-                    <div class="lbl">Humidity</div>
-                </div>
-                <div class="metric-box">
-                    <div class="val">{{ item.session.ph }}</div>
-                    <div class="lbl">Soil pH</div>
-                </div>
-                <div class="metric-box">
-                    <div class="val">{{ item.session.rainfall }}mm</div>
-                    <div class="lbl">Rainfall</div>
-                </div>
-            </div>
-            {% else %}
-            <p class="text-muted mt-2 mb-0" style="font-size:0.88rem;">
-                ℹ️ This was a manual search — no soil or environment data was entered.
-            </p>
-            {% endif %}
-
-            <!-- Progress bar -->
-            {% if item.total_tasks > 0 %}
-            <div class="progress-wrap">
-                <div class="d-flex justify-content-between mb-1" style="font-size:0.82rem; color:#6c757d;">
-                    <span>Cycle Progress</span>
-                    <span>{{ item.completed_tasks }} / {{ item.total_tasks }} stages &nbsp;({{ item.progress_pct
-                        }}%)</span>
-                </div>
-                <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.progress_pct }}%;"
-                        aria-valuenow="{{ item.progress_pct }}" aria-valuemin="0" aria-valuemax="100">
+            {% if session_data %}
+            <div class="session-list">
+                {% for item in session_data %}
+                <div class="session-card">
+                    <!-- Top row -->
+                    <div class="sc-top">
+                        <span class="sc-crop">🌾 {{ item.session.crop_name|capfirst }}</span>
+                        {% if item.is_manual %}
+                        <span class="tag tag-manual">Manual Search</span>
+                        {% else %}
+                        <span class="tag tag-ml">ML Prediction</span>
+                        {% endif %}
+                        
+                        {% if item.total_tasks == 0 %}
+                        <span class="tag tag-idle">Not Started</span>
+                        {% elif item.is_completed %}
+                        <span class="tag tag-done">
+                            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Completed
+                        </span>
+                        {% else %}
+                        <span class="tag tag-prog">In Progress</span>
+                        {% endif %}
+                        <span class="sc-date">{{ item.session.created_at|date:"M d, Y — H:i" }}</span>
                     </div>
+
+                    <!-- Soil metrics (ML only) -->
+                    {% if not item.is_manual %}
+                    <div class="metrics-grid">
+                        <div class="metric-box"><span class="metric-val">{{ item.session.N }}</span><span class="metric-lbl">N (kg/ha)</span></div>
+                        <div class="metric-box"><span class="metric-val">{{ item.session.P }}</span><span class="metric-lbl">P (kg/ha)</span></div>
+                        <div class="metric-box"><span class="metric-val">{{ item.session.K }}</span><span class="metric-lbl">K (kg/ha)</span></div>
+                        <div class="metric-box"><span class="metric-val">{{ item.session.temperature }}°</span><span class="metric-lbl">Temp (°C)</span></div>
+                        <div class="metric-box"><span class="metric-val">{{ item.session.humidity }}%</span><span class="metric-lbl">Humidity</span></div>
+                        <div class="metric-box"><span class="metric-val">{{ item.session.ph }}</span><span class="metric-lbl">Soil pH</span></div>
+                        <div class="metric-box"><span class="metric-val">{{ item.session.rainfall }}</span><span class="metric-lbl">Rain (mm)</span></div>
+                    </div>
+                    {% else %}
+                    <div class="manual-note">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Manual search — no soil or environment data was entered.
+                    </div>
+                    {% endif %}
+
+                    <!-- Progress bar -->
+                    {% if item.total_tasks > 0 %}
+                    <div class="progress-wrap">
+                        <div class="progress-meta">
+                            <span>Cycle Progress</span>
+                            <span>{{ item.completed_tasks }} / {{ item.total_tasks }} stages ({{ item.progress_pct }}%)</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width:{{ item.progress_pct }}%"></div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p style="font-size:13px;color:var(--subtle);margin-top:14px">No cycle tasks started yet.</p>
+                    {% endif %}
                 </div>
+                {% endfor %}
             </div>
             {% else %}
-            <p class="text-muted mt-3 mb-0" style="font-size:0.85rem;">No cycle tasks started yet.</p>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 12 7 9 7 4c0 0 2.5 2 5 2s5-2 5-2c0 5-5 8-5 8z"/></svg>
+                </div>
+                <h3 class="empty-title">No crop sessions yet</h3>
+                <p style="font-size:14px;color:var(--muted)">This user hasn't made any crop predictions yet.</p>
+            </div>
             {% endif %}
         </div>
-        {% endfor %}
 
-        {% else %}
-        <div class="empty-state">
-            <div style="font-size:3.5rem; margin-bottom:15px;">🌱</div>
-            <h4 style="color: var(--primary-dark);">No crop sessions yet</h4>
-            <p class="text-muted">This user hasn't made any crop predictions or searched for crops yet.</p>
+        <!-- MOBILE BOTTOM TAB BAR -->
+        <div class="bottom-tabs">
+            <a href="/admin-panel/dashboard/" class="tab-item">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+                <span class="tab-label">Dashboard</span>
+            </a>
+            <a href="/admin-panel/users/" class="tab-item active">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                <span class="tab-label">Users</span>
+            </a>
+            <a href="/admin-panel/crops/" class="tab-item">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 12 7 9 7 4c0 0 2.5 2 5 2s5-2 5-2c0 5-5 8-5 8z"/></svg></div>
+                <span class="tab-label">Crops</span>
+            </a>
+            <a href="/admin-panel/feedback/" class="tab-item">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <span class="tab-label">Feedback</span>
+            </a>
+            <button class="tab-item" onclick="openSidebar()">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+                <span class="tab-label">Menu</span>
+            </button>
         </div>
-        {% endif %}
-
     </div>
 
+    <script>
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('sb-overlay').classList.add('open');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sb-overlay').classList.remove('open');
+        }
+    </script>
 </body>
-
 </html>

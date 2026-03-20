@@ -19,7 +19,7 @@ class UserCropSession(models.Model):
     humidity = models.FloatField()
     ph = models.FloatField()
     rainfall = models.FloatField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.crop_name} ({self.created_at})"
@@ -29,7 +29,7 @@ from django.utils import timezone
 class UserCycleTask(models.Model):
     session = models.ForeignKey(UserCropSession, on_delete=models.CASCADE)
     crop_cycle = models.ForeignKey(CropCycle, on_delete=models.CASCADE)
-    is_completed = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False, db_index=True)
     completed_at = models.DateTimeField(null=True, blank=True)
 class CropDetails(models.Model):
     crop_name = models.CharField(max_length=50, unique=True)
@@ -45,7 +45,7 @@ class CropDetails(models.Model):
     image = models.ImageField(upload_to="crop_images/", blank=True, null=True)
 
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
         return self.crop_name
@@ -88,7 +88,7 @@ class ChatbotKnowledge(models.Model):
 
     is_active = models.BooleanField(default=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
         return f"{self.intent} | {self.crop_name or 'Any'} | {self.stage_name or 'Any'}"
@@ -97,7 +97,7 @@ class Feedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     subject = models.CharField(max_length=200)
     message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.subject}"

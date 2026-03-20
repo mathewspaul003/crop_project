@@ -27,16 +27,82 @@ def admin_dashboard(request):
     top_crop_labels = json.dumps([r["crop_name"].title() for r in top_crops_qs])
     top_crop_data   = json.dumps([r["total"] for r in top_crops_qs])
 
-    # --- Sessions per day for last 7 days ---
+    # --- Sessions per day for last 7 days (Optimized) ---
     today = timezone.now().date()
+    seven_days_ago = today - datetime.timedelta(days=6)
+    sessions_stats = (
+        UserCropSession.objects.filter(created_at__date__gte=seven_days_ago)
+        .values("created_at__date")
+        .annotate(total=Count("id"))
+    )
+    stats_dict = {s["created_at__date"]: s["total"] for s in sessions_stats}
+    
     day_labels, day_data = [], []
     for i in range(6, -1, -1):
         day = today - datetime.timedelta(days=i)
-        count = UserCropSession.objects.filter(created_at__date=day).count()
         day_labels.append(day.strftime("%b %d"))
-        day_data.append(count)
+        day_data.append(stats_dict.get(day, 0))
+    
     weekly_labels = json.dumps(day_labels)
     weekly_data   = json.dumps(day_data)
+
+    # --- Recent Predictions (Last 5) (Optimized with annotations) ---
+    recent_predictions_qs = (
+        UserCropSession.objects.select_related("user")
+        .annotate(
+            total_tasks=Count("usercycletask"),
+            completed_tasks=Count("usercycletask", filter=Q(usercycletask__is_completed=True))
+        )
+        .order_by("-created_at")[:5]
+    )
+    
+    recent_predictions = []
+    for p in recent_predictions_qs:
+        has_tasks = p.total_tasks > 0
+        all_done = has_tasks and (p.total_tasks == p.completed_tasks)
+        
+        status_text = "Done" if all_done else ("Active" if has_tasks else "Analysis")
+        status_class = "s-done" if all_done else ("s-active" if has_tasks else "s-pending")
+        
+        recent_predictions.append({
+            "user_name": p.user.username,
+            "crop_name": p.crop_name.title(),
+            "status_text": status_text,
+            "status_class": status_class,
+        })
+
+    # --- Recent Activity Feed (Combined) ---
+    recent_activities = []
+    
+    # New Users
+    new_users = User.objects.filter(is_staff=False).order_by("-date_joined")[:3]
+    for u in new_users:
+        recent_activities.append({
+            "dot_class": "dot-b",
+            "text": f"New farmer <strong>{u.username}</strong> joined the community.",
+            "time": u.date_joined,
+        })
+        
+    # New Predictions
+    for p in recent_predictions_qs[:3]:
+        recent_activities.append({
+            "dot_class": "dot-g",
+            "text": f"AI recommended <strong>{p.crop_name.title()}</strong> for {p.user.username}.",
+            "time": p.created_at,
+        })
+        
+    # New Feedback
+    new_feedback = Feedback.objects.order_by("-created_at")[:2]
+    for f in new_feedback:
+        recent_activities.append({
+            "dot_class": "dot-e",
+            "text": f"New feedback received from {f.user.username if f.user else 'Guest'}.",
+            "time": f.created_at,
+        })
+        
+    # Sort all activities by time
+    recent_activities.sort(key=lambda x: x["time"], reverse=True)
+    recent_activities = recent_activities[:6] # Top 6 only
 
     context = {
         "crop_count":    crop_count,
@@ -47,6 +113,8 @@ def admin_dashboard(request):
         "top_crop_data":   top_crop_data,
         "weekly_labels":   weekly_labels,
         "weekly_data":     weekly_data,
+        "recent_predictions": recent_predictions,
+        "recent_activities": recent_activities,
     }
 
     return render(request, "admin_panel/admin_dashboard.html", context)
@@ -135,7 +203,7 @@ def admin_manage_cycles(request):
     from itertools import groupby
     from operator import attrgetter
 
-    all_cycles = CropCycle.objects.all().order_by('crop_name', 'start_day')
+    all_cycles = list(CropCycle.objects.all().order_by('crop_name', 'start_day'))
     grouped_cycles = {}
     for key, group in groupby(all_cycles, key=attrgetter('crop_name')):
         grouped_cycles[key] = list(group)

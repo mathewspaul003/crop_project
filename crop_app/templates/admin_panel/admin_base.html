@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{% block title %}AgriIntel Admin{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    
+    <!-- Standard CSS -->
+    <link rel="stylesheet" href="{% static 'crop_app/css/admin_base.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Sidebar Inclusion -->
+    {% include "admin_panel/admin_sidebar.html" with active_page=active_page %}
+
+    <!-- Main Content Area -->
+    <div class="main">
+        
+        <!-- Shared Topbar -->
+        <div class="topbar">
+            <div class="topbar-l">
+                <button class="mob-ham" id="ham" onclick="openSidebar()"><span></span><span></span><span></span></button>
+                <div>
+                    <div class="topbar-title">{% block page_title %}Admin Panel{% endblock %}</div>
+                    <div class="topbar-sub">{% block page_subtitle %}Management & Intelligence{% endblock %}</div>
+                </div>
+            </div>
+            <div class="topbar-r">
+                {% block topbar_right %}
+                <a href="/admin-panel/dashboard/" class="icon-btn" title="Dashboard">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                </a>
+                {% endblock %}
+                <a href="/admin-panel/logout/" class="icon-btn" title="Sign out">
+                    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- Shared Bottom Tab Bar (Local Mobile Nav) -->
+        <div class="bottom-tabs">
+            <a href="/admin-panel/dashboard/" class="tab-item {% if '/admin-panel/dashboard/' in request.path %}active{% endif %}">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+                <span class="tab-label">Dashboard</span>
+            </a>
+            <a href="/admin-panel/users/" class="tab-item {% if '/admin-panel/users/' in request.path %}active{% endif %}">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                <span class="tab-label">Users</span>
+            </a>
+            <a href="/admin-panel/crops/" class="tab-item {% if '/admin-panel/crops/' in request.path %}active{% endif %}">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 12 7 9 7 4c0 0 2.5 2 5 2s5-2 5-2c0 5-5 8-5 8z"/></svg></div>
+                <span class="tab-label">Crops</span>
+            </a>
+            <a href="/admin-panel/feedback/" class="tab-item {% if '/admin-panel/feedback/' in request.path %}active{% endif %}">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <span class="tab-label">Feedback</span>
+            </a>
+            <button class="tab-item" onclick="openSidebar()">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+                <span class="tab-label">Menu</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Core Scripts -->
+    <script>
+        function openSidebar(){
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('sb-overlay').classList.add('open');
+            document.body.style.overflow='hidden';
+        }
+        function closeSidebar(){
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sb-overlay').classList.remove('open');
+            document.body.style.overflow='';
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

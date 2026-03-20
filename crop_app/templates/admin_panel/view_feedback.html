@@ -1,169 +1,140 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feedback Center | Admin Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Feedback Center — AgriIntel Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'crop_app/css/admin_base.css' %}">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        /* ── FEEDBACK CARDS ── */
+        .feedback-list { display: flex; flex-direction: column; gap: 14px }
+        .feedback-card { background: white; border-radius: 16px; border: 1px solid var(--border); padding: 24px; transition: all .2s }
+        .feedback-card:hover { border-color: var(--g2); box-shadow: 0 4px 20px rgba(45, 106, 79, .07) }
+        .fb-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px }
+        .fb-subject { font-family: 'Instrument Serif', serif; font-size: 20px; letter-spacing: -.3px; color: var(--ink); flex: 1 }
+        .fb-date { font-size: 12px; color: var(--subtle); white-space: nowrap; padding-top: 4px; flex-shrink: 0 }
+        .fb-meta { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 14px; flex-wrap: wrap }
+        .fb-from { font-size: 12px; color: var(--muted) }
+        .fb-user-badge { font-size: 12px; font-weight: 600; background: var(--g05); color: var(--g6); border: 1px solid var(--g1); padding: 3px 9px; border-radius: 7px }
+        .fb-email { font-size: 12px; color: var(--muted) }
+        .fb-message { font-size: 14px; color: var(--muted); line-height: 1.7; white-space: pre-line }
 
-        :root {
-            --primary-dark: #1b4332;
-            --accent-red: #dc3545;
-            --glass: rgba(255, 255, 255, 0.95);
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #f4f7f6 0%, #e2e8e5 100%);
-            min-height: 100vh;
-        }
-
-        .admin-nav {
-            background: rgba(220, 53, 69, 0.95) !important;
-            backdrop-filter: blur(10px);
-            padding: 15px 0;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-            padding: 35px;
-            margin-top: 30px;
-        }
-
-        .feedback-item {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s;
-        }
-
-        .feedback-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            border-color: rgba(220, 53, 69, 0.1);
-        }
-
-        .feedback-subject {
-            font-weight: 800;
-            color: var(--accent-red);
-            font-size: 1.3rem;
-            margin-bottom: 8px;
-        }
-
-        .feedback-meta {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #f1f3f5;
-        }
-
-        .user-badge {
-            background: #f8f9fa;
-            color: var(--primary-dark);
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            border: 1px solid #e9ecef;
-        }
-
-        .feedback-message {
-            line-height: 1.6;
-            color: #495057;
-            white-space: pre-line;
-        }
-
-        .page-title {
-            font-weight: 800;
-            font-size: 2rem;
-            color: var(--primary-dark);
-        }
-
-        .btn-back {
-            background: white;
-            color: var(--primary-dark) !important;
-            padding: 10px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            text-decoration: none;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-
-        .btn-back:hover {
-            background: #f8f9fa;
-            transform: translateX(-5px);
+        /* ── EMPTY STATE ── */
+        .empty-state { background: white; border-radius: 16px; border: 1px solid var(--border); padding: 72px 32px; text-align: center }
+        .empty-icon { width: 64px; height: 64px; border-radius: 18px; background: var(--g05); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px }
+        .empty-icon svg { width: 30px; height: 30px; stroke: var(--g5); fill: none; stroke-width: 1.5 }
+        .empty-title { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 6px }
+        
+        @media(max-width:580px) {
+            .topbar-title { font-size: 18px }
         }
     </style>
 </head>
-
 <body>
 
-    <nav class="navbar admin-nav shadow-sm">
-        <div class="container">
-            <a class="navbar-brand text-white fw-bold" href="/admin-panel/dashboard/">🚜 AGRI ADMIN PRO</a>
-            <div class="d-flex gap-2">
-                <a href="/admin-panel/dashboard/" class="btn-back">Dashboard</a>
-            </div>
-        </div>
-    </nav>
+    <!-- SIDEBAR -->
+    {% include "admin_panel/admin_sidebar.html" %}
 
-    <div class="container py-5">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <div>
-                <h1 class="page-title">Community Feedback</h1>
-                <p class="text-muted">Messages and suggestions from platform users</p>
-            </div>
-            <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm">
-                {{ feedbacks|length }} Messages
-            </span>
-        </div>
-
-        {% if feedbacks %}
-        <div class="glass-card">
-            {% for feedback in feedbacks %}
-            <div class="feedback-item">
-                <div class="d-flex justify-content-between align-items-start">
-                    <h5 class="feedback-subject">{{ feedback.subject }}</h5>
-                    <span class="text-muted small">{{ feedback.created_at|date:"M d, Y | H:i" }}</span>
-                </div>
-
-                <div class="feedback-meta">
-                    <span>From: <span class="user-badge">@{{ feedback.user.username }}</span></span>
-                    {% if feedback.user.email %}
-                    <span>•</span>
-                    <span>{{ feedback.user.email }}</span>
-                    {% endif %}
-                </div>
-
-                <div class="feedback-message">
-                    {{ feedback.message }}
+    <!-- MAIN -->
+    <div class="main">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="topbar-l">
+                <button class="mob-ham" onclick="openSidebar()">
+                    <span></span><span></span><span></span>
+                </button>
+                <div>
+                    <div class="topbar-title">Feedback Center</div>
+                    <div class="topbar-sub">Messages from platform users</div>
                 </div>
             </div>
-            {% endfor %}
+            <div class="topbar-r">
+                <div class="live-badge">{{ feedbacks|length }} Messages</div>
+                <button class="icon-btn" onclick="location.reload()">
+                    <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                </button>
+            </div>
         </div>
-        {% else %}
-        <div class="glass-card text-center py-5">
-            <div style="font-size: 3.5rem; margin-bottom: 20px;">📬</div>
-            <h4>Inbox is empty</h4>
-            <p class="text-muted">No user feedback has been submitted yet.</p>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <div class="page-hdr">
+                <div>
+                    <div class="page-tag">Community</div>
+                    <h1 class="page-title">Feedback Center</h1>
+                    <p class="page-sub">Messages and suggestions from platform users</p>
+                </div>
+            </div>
+
+            {% if feedbacks %}
+            <div class="feedback-list">
+                {% for feedback in feedbacks %}
+                <div class="feedback-card">
+                    <div class="fb-top">
+                        <h3 class="fb-subject">{{ feedback.subject }}</h3>
+                        <span class="fb-date">{{ feedback.created_at|date:"M d, Y · H:i" }}</span>
+                    </div>
+                    <div class="fb-meta">
+                        <span class="fb-from">From:</span>
+                        <span class="fb-user-badge">@{{ feedback.user.first_name }}</span>
+                        {% if feedback.user.email %}
+                        <span class="fb-email">{{ feedback.user.email }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="fb-message">{{ feedback.message }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <h3 class="empty-title">Inbox is empty</h3>
+                <p style="font-size:14px;color:var(--muted)">No user feedback has been submitted yet.</p>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
+
+        <!-- MOBILE BOTTOM TAB BAR -->
+        <div class="bottom-tabs">
+            <a href="/admin-panel/dashboard/" class="tab-item">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+                <span class="tab-label">Dashboard</span>
+            </a>
+            <a href="/admin-panel/users/" class="tab-item">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                <span class="tab-label">Users</span>
+            </a>
+            <a href="/admin-panel/crops/" class="tab-item">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 12 7 9 7 4c0 0 2.5 2 5 2s5-2 5-2c0 5-5 8-5 8z"/></svg></div>
+                <span class="tab-label">Crops</span>
+            </a>
+            <a href="/admin-panel/feedback/" class="tab-item active">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <span class="tab-label">Feedback</span>
+            </a>
+            <button class="tab-item" onclick="openSidebar()">
+                <div class="tab-icon"><svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+                <span class="tab-label">Menu</span>
+            </button>
+        </div>
     </div>
 
+    <script>
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('sb-overlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sb-overlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    </script>
 </body>
-
 </html>

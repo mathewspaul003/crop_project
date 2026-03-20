@@ -1,0 +1,54 @@
+{% comment %}
+  AGRIINTEL ADMIN — SHARED SIDEBAR PARTIAL
+  Automatically highlights active links based on request.path
+{% endcomment %}
+
+<div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <button class="sb-close-btn" onclick="closeSidebar()">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a class="sb-brand" href="/admin-panel/dashboard/">
+    <div class="sb-logomark"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 2s2-8-5-8"/></svg></div>
+    <div class="sb-wordmark">AgriIntel<small>Admin Panel</small></div>
+  </a>
+
+  <div class="sb-section">Overview</div>
+  <a href="/admin-panel/dashboard/" class="sb-link {% if request.path == '/admin-panel/dashboard/' %}active{% endif %}">
+    <span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Dashboard
+  </a>
+  <a href="/admin-panel/users/" class="sb-link {% if '/admin-panel/users/' in request.path %}active{% endif %}">
+    <span class="ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Users
+  </a>
+  <a href="/admin-panel/crops/" class="sb-link {% if '/admin-panel/crops/' in request.path and '/admin-panel/crops/add/' not in request.path %}active{% endif %}">
+    <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 22V12M12 12C12 12 7 9 7 4c0 0 2.5 2 5 2s5-2 5-2c0 5-5 8-5 8z"/></svg></span>Crop Varieties
+  </a>
+
+  <div class="sb-section">Management</div>
+  <a href="/admin-panel/crops/add/" class="sb-link {% if '/admin-panel/crops/add/' in request.path %}active{% endif %}">
+    <span class="ico"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg></span>Add Crops
+  </a>
+  <a href="/admin-panel/cycles/" class="sb-link {% if '/admin-panel/cycles/' in request.path or '/admin-panel/add-crop-cycle/' in request.path %}active{% endif %}">
+    <span class="ico"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span>Cycle Architect
+  </a>
+  <a href="/admin-panel/feedback/" class="sb-link {% if '/admin-panel/feedback/' in request.path %}active{% endif %}">
+    <span class="ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Feedback
+  </a>
+
+  <hr class="sb-divider">
+  <div class="sb-section">Tools</div>
+  <a href="/" class="sb-link">
+    <span class="ico"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Public Site
+  </a>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">A</div>
+      <div><div class="sb-uname">Administrator</div><div class="sb-urole">Super Admin</div></div>
+      <a href="/admin-panel/logout/" class="sb-logout" title="Sign out">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </a>
+    </div>
+  </div>
+</aside>
