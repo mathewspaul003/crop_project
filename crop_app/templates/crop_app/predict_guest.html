@@ -90,12 +90,19 @@
             border-radius: 22px;
             padding: 32px 28px 28px;
             margin-top: 36px;
-            animation: riseIn 0.6s cubic-bezier(0.22,1,0.36,1);
+            animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         @keyframes riseIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0);    }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .winner-badge {
@@ -141,7 +148,7 @@
 
         .guest-cta {
             background: linear-gradient(135deg, #f0faf4, #d8f3dc);
-            border: 1.5px solid rgba(45,106,79,0.18);
+            border: 1.5px solid rgba(45, 106, 79, 0.18);
             border-radius: 16px;
             padding: 18px 24px;
             margin-top: 20px;
@@ -153,7 +160,8 @@
             background: rgba(255, 255, 255, 0.8) !important;
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            padding: 0 32px; /* Fluid edge-to-edge consistent with admin */
+            padding: 0 32px;
+            /* Fluid edge-to-edge consistent with admin */
             min-height: 72px;
             display: flex;
             align-items: center;
@@ -348,8 +356,10 @@
 
                         <!-- Guest CTA -->
                         <div class="guest-cta">
-                            <p class="mb-2" style="color:#1b4332; font-weight:600;">Want to start a full growing cycle?</p>
-                            <a href="/login/" class="btn btn-predict d-inline-block" style="max-width:260px; margin-top:0; padding:10px 28px; font-size:0.95rem;">
+                            <p class="mb-2" style="color:#1b4332; font-weight:600;">Want to start a full growing cycle?
+                            </p>
+                            <a href="/login/" class="btn btn-predict d-inline-block"
+                                style="max-width:260px; margin-top:0; padding:10px 28px; font-size:0.95rem;">
                                 Login to Continue →
                             </a>
                         </div>
@@ -359,10 +369,11 @@
                     <!-- Chart.js -->
                     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
                     <script>
-                    (function(){
-                        const raw = {{ top_crops|safe }};
+                        (function () {
+                            const raw = {{ top_crops| safe
+                        }};
                         const labels = raw.map(c => c.name);
-                        const data   = raw.map(c => c.prob);
+                        const data = raw.map(c => c.prob);
                         const colors = [
                             'rgba(27,  67, 50, 0.90)',
                             'rgba(45, 106, 79, 0.80)',
@@ -370,7 +381,7 @@
                             'rgba(149, 213, 178, 0.70)'
                         ];
                         const borders = [
-                            '#1b4332','#2d6a4f','#52a174','#74c69d'
+                            '#1b4332', '#2d6a4f', '#52a174', '#74c69d'
                         ];
 
                         new Chart(document.getElementById('cropChart'), {
@@ -428,7 +439,7 @@
                                 }
                             }
                         });
-                    })();
+                    }) ();
                     </script>
                     {% endif %}
                     {% endif %}
