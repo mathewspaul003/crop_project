@@ -1,79 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tasks</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Cycles | AgriIntel Hub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+        :root{--g9:#0d2e10;--g8:#1b4e1e;--g6:#2e7d32;--g4:#4caf50;--g1:#d4f0d0;--g05:#f0faf0;--cream:#faf8f3;--ink:#1c2017;--muted:#6b7563;--faint:#9baa91;--border:#eceae4;--surface:#ffffff;}
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+        .page-body{padding:48px 0 80px;}
+        .page-header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:40px;}
+        .page-header h1{font-family:'Instrument Serif',serif;font-size:2.4rem;color:var(--g9);letter-spacing:-1px;font-weight:400;}
+        .page-header p{color:var(--muted);font-size:15px;margin-top:6px;}
+        .btn-cta{display:inline-flex;align-items:center;gap:8px;background:var(--g6);color:white;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;transition:background 0.2s;}
+        .btn-cta:hover{background:var(--g8);color:white;}
+        .data-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+        .data-card-head{display:flex;align-items:center;justify-content:space-between;padding:22px 32px;border-bottom:1px solid var(--border);}
+        .data-card-head h3{font-family:'Instrument Serif',serif;font-size:1.3rem;color:var(--g9);font-weight:400;}
+        .data-table{width:100%;border-collapse:collapse;}
+        .data-table thead th{padding:14px 32px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--faint);border-bottom:1px solid var(--border);text-align:left;}
+        .data-table tbody tr{border-bottom:1px solid #f5f4ef;transition:background 0.15s;}
+        .data-table tbody tr:last-child{border-bottom:none;}
+        .data-table tbody tr:hover{background:#fdfcf8;}
+        .data-table tbody td{padding:18px 32px;font-size:14px;color:var(--ink);vertical-align:middle;}
+        .td-muted{color:var(--faint);font-size:13px;}
+        .crop-badge{display:inline-flex;align-items:center;gap:6px;background:var(--g05);color:var(--g8);font-size:13px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid var(--g1);}
+        .status-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:8px;}
+        .status-done{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+        .status-progress{background:#fffbeb;color:#92400e;border:1px solid #fed7aa;}
+        .status-none{background:#f8fafc;color:#64748b;border:1px solid #e2e8f0;}
+        .progress-bar-wrap{width:100px;height:6px;background:#f0f0ed;border-radius:100px;overflow:hidden;}
+        .progress-bar-fill{height:100%;background:var(--g4);border-radius:100px;}
+        .open-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--g6);border:1px solid var(--g1);padding:6px 14px;border-radius:8px;text-decoration:none;transition:all 0.2s;}
+        .open-btn:hover{background:var(--g6);color:white;border-color:var(--g6);}
+        .empty-state{padding:60px 32px;text-align:center;}
+        .empty-icon{width:56px;height:56px;background:var(--g05);border:1px solid var(--g1);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 20px;}
+        .empty-state p{font-size:15px;color:var(--muted);margin-bottom:20px;}
+        @media(max-width:768px){.data-table thead th,.data-table tbody td{padding-left:16px;padding-right:16px;}.data-card-head{padding:20px 16px;}}
+    </style>
 </head>
-
-<body class="bg-light">
-
-{% include "user/user_header.html" %}
-
-<div class="container mt-4">
-
-    <div class="card shadow p-3">
-        <h4 class="mb-3">✅ My Crop Cycle Tasks</h4>
-
-        {% if task_data %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped align-middle">
-                    <thead class="table-success">
-                        <tr>
-                            <th>#</th>
-                            <th>Crop</th>
-                            <th>Date & Time</th>
-                            <th>Progress</th>
-                            <th>Status</th>
-                            <th>Open</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for item in task_data %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-
-                            <td class="fw-bold text-success">
-                                {{ item.session.crop_name|title }}
-                            </td>
-
-                            <td>{{ item.session.created_at }}</td>
-
-                            <td>
-                                {{ item.completed }} / {{ item.total }}
-                            </td>
-
-                            <td>
-                                {% if item.status == "Completed" %}
-                                    <span class="badge bg-success">✅ Completed</span>
-                                {% elif item.status == "In Progress" %}
-                                    <span class="badge bg-warning text-dark">⏳ In Progress</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">❌ Not Started</span>
-                                {% endif %}
-                            </td>
-
-                            <td>
-                                <a href="/start-cycle/?session_id={{ item.session.id }}"
-                                   class="btn btn-sm btn-primary">
-                                    ✅ Open Tasks
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                </table>
+<body>
+    {% include "user/user_header.html" %}
+    <div class="page-body">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>Crop Cycles</h1>
+                    <p>Monitor the progress of all your active and completed grow cycles.</p>
+                </div>
+                <a href="/predict/" class="btn-cta"><i class="fa-solid fa-seedling"></i> New Prediction</a>
             </div>
-
-        {% else %}
-            <div class="alert alert-warning text-center">
-                ⚠️ No tasks found. Predict a crop first.
+            <div class="data-card">
+                <div class="data-card-head">
+                    <h3>All Cycles</h3>
+                    <span class="td-muted">{{ task_data|length }} total</span>
+                </div>
+                {% if task_data %}
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Crop</th>
+                                <th>Started</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in task_data %}
+                            <tr>
+                                <td class="td-muted">{{ forloop.counter }}</td>
+                                <td><span class="crop-badge">🌾 {{ item.session.crop_name|title }}</span></td>
+                                <td class="td-muted">{{ item.session.created_at|date:"d M Y" }}</td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        <div class="progress-bar-wrap">
+                                            <div class="progress-bar-fill" style="width:{% if item.total %}{% widthratio item.completed item.total 100 %}{% else %}0{% endif %}%;"></div>
+                                        </div>
+                                        <span class="td-muted">{{ item.completed }}/{{ item.total }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if item.status == "Completed" %}
+                                        <span class="status-pill status-done"><i class="fa-solid fa-circle-check"></i> Completed</span>
+                                    {% elif item.status == "In Progress" %}
+                                        <span class="status-pill status-progress"><i class="fa-solid fa-clock"></i> In Progress</span>
+                                    {% else %}
+                                        <span class="status-pill status-none"><i class="fa-regular fa-circle"></i> Not Started</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/start-cycle/?session_id={{ item.session.id }}" class="open-btn">
+                                        <i class="fa-solid fa-arrow-right"></i> Open Tasks
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🌱</div>
+                    <p>No crop cycles found. Run a prediction first to start growing.</p>
+                    <a href="/predict/" class="btn-cta">Make First Prediction</a>
+                </div>
+                {% endif %}
             </div>
-        {% endif %}
+        </div>
     </div>
-
-</div>
-
 </body>
 </html>

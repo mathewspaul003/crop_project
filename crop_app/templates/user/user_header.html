@@ -1,269 +1,531 @@
+<!-─ AgriIntel Hub — User Header (Professional) ──────────────────────────── -->
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
 
-    :root {
-        --nav-bg: rgba(27, 67, 50, 0.85); /* Deep green glass */
-        --nav-border: rgba(255, 255, 255, 0.15);
-        --nav-accent: #52b788;
-        --nav-text: #ffffff;
-    }
+/* ─────────────────────────────────────────
+   Variables
+───────────────────────────────────────── */
+:root {
+    --nav-h: 68px;
+    --nav-bg: #0f2412;
+    --nav-border: rgba(255,255,255,0.06);
+    --nav-text: rgba(255,255,255,0.62);
+    --nav-text-active: #ffffff;
+    --nav-accent: #6fcf82;
+    --nav-hover-bg: rgba(255,255,255,0.06);
+    --nav-active-bg: rgba(111,207,130,0.12);
+    --drop-bg: #ffffff;
+    --drop-shadow: 0 20px 48px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08);
+}
 
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: #f0f7f4 !important;
-    }
+/* ─────────────────────────────────────────
+   Reset for nav scope
+───────────────────────────────────────── */
+.nh *{box-sizing:border-box;margin:0;padding:0;}
 
-    /* ── Floating Header ── */
-    .header-wrapper {
-        position: sticky;
-        top: 0;
-        z-index: 2000;
-        padding: 12px 0;
-        transition: all 0.4s ease;
-    }
+/* ─────────────────────────────────────────
+   Outer shell
+───────────────────────────────────────── */
+.nh {
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--nav-border);
+    min-height: var(--nav-h);
+    font-family: 'DM Sans', sans-serif;
+    /* Subtle bottom glow for depth */
+    box-shadow: 0 1px 0 rgba(111,207,130,0.06), 0 4px 24px rgba(0,0,0,0.25);
+}
 
-    /* Shrink on scroll effect */
-    .header-wrapper.scrolled {
-        padding: 8px 0;
-    }
+.nh-inner {
+    display: flex;
+    align-items: center;
+    height: var(--nav-h);
+    padding: 0 32px;
+    gap: 0;
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+}
 
-    .glass-nav {
-        background: var(--nav-bg) !important;
-        backdrop-filter: blur(14px) saturate(180%);
-        -webkit-backdrop-filter: blur(14px) saturate(180%);
-        border: 1px solid var(--nav-border);
-        border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-        padding: 6px 20px !important;
-        margin: 0 auto;
-        width: 95%;
-        max-width: 1300px;
-        transition: all 0.3s ease;
-    }
+/* ─────────────────────────────────────────
+   Brand
+───────────────────────────────────────── */
+.nh-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+    margin-right: 40px;
+    padding-right: 40px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+}
 
-    .header-wrapper.scrolled .glass-nav {
-        border-radius: 12px;
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        border-right: none;
-        border-left: none;
-    }
+.nh-brand-icon {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, #1e5c24, #2e7d32);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(111,207,130,0.2);
+}
 
-    .nav-brand {
-        font-weight: 700;
-        font-size: 1.3rem;
-        color: white !important;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        text-decoration: none;
-        letter-spacing: -0.5px;
-    }
+.nh-brand-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: #a8e0a0;
+}
 
-    .nav-brand span.emoji {
-        font-size: 1.6rem;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-    }
+.nh-brand-text {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: white;
+    letter-spacing: -0.3px;
+    line-height: 1;
+}
 
-    /* ── Navigation Links ── */
-    .nav-link-custom {
-        color: rgba(255, 255, 255, 0.85) !important;
-        font-weight: 500;
-        font-size: 0.92rem;
-        padding: 8px 16px !important;
-        border-radius: 10px;
-        transition: all 0.25s ease;
-        position: relative;
-    }
+.nh-brand-text small {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--nav-accent);
+    margin-top: 1px;
+}
 
-    .nav-link-custom:hover {
-        color: white !important;
-        background: rgba(255, 255, 255, 0.1);
-    }
+/* ─────────────────────────────────────────
+   Center Nav
+───────────────────────────────────────── */
+.nh-nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+}
 
-    .nav-link-custom.active {
-        color: var(--nav-accent) !important;
-        background: rgba(82, 183, 136, 0.12);
-    }
+.nh-link {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--nav-text);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+    white-space: nowrap;
+}
 
-    /* ── User Profile Dropdown ── */
-    .user-profile-toggle {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 4px 14px 4px 6px;
-        border-radius: 50px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
+.nh-link i {
+    font-size: 13px;
+    opacity: 0.7;
+}
 
-    .user-profile-toggle:hover {
-        background: rgba(255, 255, 255, 0.15);
-        transform: translateY(-1px);
-    }
+.nh-link:hover {
+    color: var(--nav-text-active);
+    background: var(--nav-hover-bg);
+}
 
-    .user-avatar-small {
-        width: 34px;
-        height: 34px;
-        background: linear-gradient(135deg, #40916c, #1b4332);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-    }
+.nh-link.active {
+    color: var(--nav-accent);
+    background: var(--nav-active-bg);
+    font-weight: 600;
+}
 
-    .user-name-label {
-        color: white;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
+.nh-link.active i { opacity: 1; }
 
-    .dropdown-menu-custom {
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(0,0,0,0.05);
-        border-radius: 16px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.12);
-        padding: 10px;
-        margin-top: 15px !important;
-        min-width: 200px;
-    }
+/* ─────────────────────────────────────────
+   Right section
+───────────────────────────────────────── */
+.nh-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    margin-left: 16px;
+}
 
-    .dropdown-item {
-        border-radius: 8px;
-        padding: 10px 16px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #1b4332;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+/* User button */
+.nh-user-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 5px 14px 5px 6px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    text-decoration: none;
+    color: white;
+}
 
-    .dropdown-item:hover {
-        background: #f0f7f4;
-        color: #2d6a4f;
-        transform: translateX(4px);
-    }
+.nh-user-btn:hover {
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.15);
+    color: white;
+}
 
-    .dropdown-divider {
-        margin: 8px -10px;
-        border-top: 1px solid rgba(0,0,0,0.05);
-    }
+.nh-avatar {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #1e5c24, #2e7d32);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: rgba(168,224,160,0.9);
+    flex-shrink: 0;
+    border: 1px solid rgba(168,224,160,0.15);
+}
 
-    .text-danger:hover {
-        background: #fef2f2 !important;
-        color: #dc2626 !important;
-    }
+.nh-username {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
-    /* ── Mobile Layout ── */
-    @media (max-width: 991px) {
-        .glass-nav {
-            border-radius: 16px;
-            width: 100%;
-        }
-        .navbar-collapse {
-            background: rgba(27, 67, 50, 0.98);
-            margin-top: 15px;
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .nav-link-custom {
-            margin-bottom: 5px;
-        }
-        .user-profile-toggle {
-            margin-top: 10px;
-            width: fit-content;
-        }
-    }
+.nh-chevron {
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    margin-left: 2px;
+}
+
+/* ─────────────────────────────────────────
+   Dropdown
+───────────────────────────────────────── */
+.nh-dropdown {
+    background: var(--drop-bg);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 14px;
+    box-shadow: var(--drop-shadow);
+    padding: 6px;
+    margin-top: 8px !important;
+    min-width: 220px;
+}
+
+/* User info block at top of dropdown */
+.nh-drop-user {
+    padding: 12px 14px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 6px;
+}
+
+.nh-drop-user-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0d1117;
+    margin-bottom: 2px;
+}
+
+.nh-drop-user-email {
+    font-size: 12px;
+    color: #94a3b8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nh-dropdown .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1e293b;
+    transition: background 0.12s;
+}
+
+.nh-dropdown .dropdown-item .di-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #475569;
+    flex-shrink: 0;
+}
+
+.nh-dropdown .dropdown-item:hover {
+    background: #f8fafc;
+    color: #0d1117;
+}
+
+.nh-dropdown .dropdown-item.di-danger  { color: #dc2626; }
+.nh-dropdown .dropdown-item.di-danger .di-icon { background: #fef2f2; color: #dc2626; }
+.nh-dropdown .dropdown-item.di-danger:hover { background: #fef2f2; }
+
+.nh-dropdown .nh-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 6px 6px;
+}
+
+/* ─────────────────────────────────────────
+   Auth buttons (guest)
+───────────────────────────────────────── */
+.nh-login {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--nav-text);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.nh-login:hover { color: white; background: var(--nav-hover-bg); }
+
+/* ─────────────────────────────────────────
+   Mobile
+───────────────────────────────────────── */
+.nh-toggle {
+    display: none;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 9px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 17px;
+    flex-shrink: 0;
+}
+
+.nh-mobile {
+    display: none;
+    flex-direction: column;
+    background: #0a1f0c;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 12px 20px 20px;
+    gap: 2px;
+}
+
+.nh-mobile .nh-link { padding: 10px 14px; }
+
+.nh-mobile-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 8px 0;
+}
+
+.nh-mobile .nh-link.m-logout { color: #f87171; }
+
+@media (max-width: 991px) {
+    .nh-nav { display: none; }
+    .nh-toggle { display: flex; }
+    .nh-right { border-left: none; padding-left: 0; margin-left: auto; }
+    .nh-predict-btn { display: none; }
+    .nh-mobile.open { display: flex; }
+}
+
+/* ─────────────────────────────────────────
+   Flash messages
+───────────────────────────────────────── */
+.nh-flashes {
+    padding: 12px 32px 0;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.nh-flash {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 3px solid #94a3b8;
+}
+
+.nh-flash.success { border-color: #22c55e; }
+.nh-flash.error   { border-color: #ef4444; }
+.nh-flash.warning { border-color: #f59e0b; }
+
+.nh-flash-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #94a3b8;
+    line-height: 1;
+}
 </style>
 
-<div class="header-wrapper" id="mainHeader">
-    <nav class="navbar navbar-expand-lg glass-nav navbar-dark">
-        <div class="container-fluid">
-            <!-- Brand -->
-            <a class="nav-brand" href="/">
-                <span class="emoji">🌾</span>
-                <span>Agri Intel Hub</span>
-            </a>
+<!-- ─── Nav ─── -->
+<header class="nh">
+    <div class="nh-inner">
 
-            <!-- Toggle -->
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Nav Links -->
-            <div class="collapse navbar-collapse" id="navbarMain">
-                <div class="mx-auto d-flex align-items-center gap-2">
-                    <a href="/dashboard/" class="nav-link-custom {% if '/dashboard/' in request.path %}active{% endif %}">Dashboard</a>
-                    <a href="/predict/" class="nav-link-custom {% if '/predict/' in request.path %}active{% endif %}">Crop Prediction</a>
-                    <a href="/crop-search/" class="nav-link-custom {% if '/crop-search/' in request.path %}active{% endif %}">Database</a>
-                </div>
-
-                <div class="ms-auto d-flex align-items-center">
-                    {% if user.is_authenticated %}
-                    <div class="dropdown">
-                        <div class="user-profile-toggle dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="user-avatar-small">🧑‍🌾</div>
-                            <span class="user-name-label">{{ user.first_name|default:user.username|title }}</span>
-                        </div>
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom" aria-labelledby="userDropdown">
-                            <li><h6 class="dropdown-header text-muted" style="font-size: 0.75rem; letter-spacing: 0.5px;">ACCOUNT</h6></li>
-                            <li><a class="dropdown-item" href="/profile/"><i class="fa-regular fa-user"></i> My Profile</a></li>
-                            <li><a class="dropdown-item" href="/my-sessions/"><i class="fa-regular fa-bookmark"></i> My Sessions</a></li>
-                            <li><a class="dropdown-item" href="/tasks/"><i class="fa-solid fa-list-check"></i> Active Cycles</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/logout/"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></li>
-                        </ul>
-                    </div>
-                    {% else %}
-                    <div class="d-flex gap-3">
-                        <a href="/login/" class="nav-link-custom">Login</a>
-                        <a href="/register/" class="btn btn-sm px-4 fw-bold" style="background: white; color: #1b4332; border-radius: 12px; font-size: 0.85rem; padding: 10px 20px;">Get Started</a>
-                    </div>
-                    {% endif %}
-                </div>
+        <!-- Brand -->
+        <a class="nh-brand" href="/">
+            <div class="nh-brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 2s2-8-5-8"/></svg>
             </div>
+            <div class="nh-brand-text">
+                AgriIntel Hub
+                <small>Smart Farming</small>
+            </div>
+        </a>
+
+        <!-- Center nav links -->
+        <nav class="nh-nav d-none d-lg-flex">
+            <a href="/dashboard/" class="nh-link {% if '/dashboard/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+            </a>
+            <a href="/predict/" class="nh-link {% if '/predict/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-seedling"></i> Predict
+            </a>
+            <a href="/crop-search/" class="nh-link {% if '/crop-search/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-database"></i> Crop Database
+            </a>
+            <a href="/tasks/" class="nh-link {% if '/tasks/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-list-check"></i> Crop Cycles
+            </a>
+            <a href="/reports/" class="nh-link {% if '/reports/' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-file-lines"></i> Reports
+            </a>
+        </nav>
+
+        <!-- Right section -->
+        <div class="nh-right">
+            {% if user.is_authenticated %}
+
+            <!-- Quick predict shortcut REMOVED -->
+
+            <!-- User dropdown -->
+            <div class="dropdown">
+                <div class="nh-user-btn dropdown-toggle"
+                     id="nhUserDrop"
+                     data-bs-toggle="dropdown"
+                     aria-expanded="false">
+                    <div class="nh-avatar"><i class="fa-solid fa-user"></i></div>
+                    <span class="nh-username">{{ user.first_name|default:user.username|title }}</span>
+                    <i class="fa-solid fa-chevron-down nh-chevron"></i>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end nh-dropdown" aria-labelledby="nhUserDrop">
+                    <!-- User info -->
+                    <li>
+                        <div class="nh-drop-user">
+                            <div class="nh-drop-user-name">{{ user.get_full_name|default:user.username|title }}</div>
+                            <div class="nh-drop-user-email">{{ user.email }}</div>
+                        </div>
+                    </li>
+                    <!-- Links -->
+                    <li>
+                        <a class="dropdown-item" href="/profile/">
+                            <div class="di-icon"><i class="fa-regular fa-user"></i></div>
+                            My Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/my-sessions/">
+                            <div class="di-icon"><i class="fa-regular fa-clock"></i></div>
+                            Prediction History
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/tasks/">
+                            <div class="di-icon"><i class="fa-solid fa-list-check"></i></div>
+                            Active Crop Cycles
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/feedback/">
+                            <div class="di-icon"><i class="fa-regular fa-comment-dots"></i></div>
+                            Send Feedback
+                        </a>
+                    </li>
+                    <li><div class="nh-divider"></div></li>
+                    <li>
+                        <a class="dropdown-item di-danger" href="/logout/">
+                            <div class="di-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+                            Sign Out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            {% else %}
+            <a href="/login/" class="nh-login">Login</a>
+            <a href="/register/" class="nh-predict-btn">Get Started</a>
+            {% endif %}
+
+            <!-- Mobile toggle -->
+            <button class="nh-toggle d-lg-none" onclick="nhToggleMobile()" aria-label="Menu">
+                <i class="fa-solid fa-bars" id="nhMenuIcon"></i>
+            </button>
         </div>
-    </nav>
-</div>
 
-<!-- Header Scroll Script -->
-<script>
-    window.addEventListener('scroll', function() {
-        const header = document.getElementById('mainHeader');
-        if (window.scrollY > 30) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
-</script>
-
-<!-- Bootstrap JS Bundle (Critical for dropdowns) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Flash Messages -->
-<div class="container" style="margin-top: 10px;">
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0"
-        style="border-radius: 12px; background: white; border-left: 4px solid {% if message.tags == 'success' %}#10b981{% elif message.tags == 'error' %}#ef4444{% else %}#f59e0b{% endif %} !important;" 
-        role="alert">
-        <div class="d-flex align-items-center gap-2">
-            {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% else %}⚠️{% endif %}
-            <span style="font-size: 0.9rem; font-weight: 500;">{{ message }}</span>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    {% endfor %}
+</header>
+
+<!-- ─── Mobile Menu ─── -->
+<div class="nh-mobile" id="nhMobileMenu">
+    <a href="/dashboard/" class="nh-link"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a href="/predict/" class="nh-link"><i class="fa-solid fa-seedling"></i> Predict</a>
+    <a href="/crop-search/" class="nh-link"><i class="fa-solid fa-database"></i> Crop Database</a>
+    <a href="/tasks/" class="nh-link"><i class="fa-solid fa-list-check"></i> Crop Cycles</a>
+    <a href="/reports/" class="nh-link"><i class="fa-solid fa-file-lines"></i> Reports</a>
+    {% if user.is_authenticated %}
+    <div class="nh-mobile-divider"></div>
+    <a href="/profile/" class="nh-link"><i class="fa-regular fa-user"></i> My Profile</a>
+    <a href="/my-sessions/" class="nh-link"><i class="fa-regular fa-clock"></i> History</a>
+    <a href="/logout/" class="nh-link m-logout"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+    {% else %}
+    <div class="nh-mobile-divider"></div>
+    <a href="/login/" class="nh-link">Login</a>
+    <a href="/register/" class="nh-link">Register</a>
     {% endif %}
 </div>
+
+<!-- ─── Flash Messages ─── -->
+{% if messages %}
+<div class="nh-flashes">
+    {% for message in messages %}
+    <div class="nh-flash {{ message.tags }}" role="alert">
+        {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% else %}⚠️{% endif %}
+        <span>{{ message }}</span>
+        <button class="nh-flash-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Bootstrap JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function nhToggleMobile() {
+    const menu = document.getElementById('nhMobileMenu');
+    const icon = document.getElementById('nhMenuIcon');
+    const isOpen = menu.classList.toggle('open');
+    icon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+}
+</script>

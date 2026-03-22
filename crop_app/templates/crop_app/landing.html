@@ -4,264 +4,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Agriculture | Modern Farming Solutions</title>
+    <title>AgriIntel | Advanced Agriculture Intelligence Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
-
         :root {
-            --primary: #2d6a4f;
-            --primary-light: #40916c;
-            --secondary: #95d5b2;
-            --bg-glass: rgba(255, 255, 255, 0.85);
+            --g9: #0d2e10; --g8: #1b4e1e; --g6: #2e7d32; --g5: #388e3c; --g4: #4caf50;
+            --g2: #a8e0a0; --g1: #d4f0d0; --g05: #f0faf0;
+            --cream: #faf8f3; --ink: #1a1f14; --muted: #5a6354;
+            --border: rgba(46, 125, 50, 0.12);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 10px 30px rgba(13, 46, 16, 0.06);
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #f0f7f4 0%, #e8f3ee 100%);
-            color: #1b4332;
-            min-height: 100vh;
-        }
-
-        .hero-section {
-            padding: 100px 0 60px;
-            text-align: center;
-        }
-
-        .main-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, #1b4332, #40916c);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-
-        .sub-title {
-            font-size: 1.25rem;
-            color: #6c757d;
-            max-width: 700px;
-            margin: 0 auto 40px;
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--cream);
+            color: var(--ink);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .cta-group {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .btn-premium {
-            padding: 14px 35px;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-main {
-            background: var(--primary);
-            color: white !important;
-            box-shadow: 0 10px 25px rgba(45, 106, 79, 0.2);
-        }
-
-        .btn-main:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(45, 106, 79, 0.3);
-        }
-
-        .btn-outline {
-            border: 2px solid var(--primary);
-            color: var(--primary) !important;
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white !important;
-            transform: translateY(-5px);
-        }
-
-        .feature-grid {
-            margin-top: 80px;
-        }
-
-        .feature-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            padding: 35px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            height: 100%;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--secondary);
-            box-shadow: 0 20px 40px rgba(45, 106, 79, 0.1);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .feature-title {
-            font-weight: 700;
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-        }
-
-        .feature-desc {
-            color: #6c757d;
-            line-height: 1.5;
-        }
-
-        .mockup-container {
-            margin-top: 100px;
-            position: relative;
-        }
-
-        .glass-mockup {
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-            padding: 20px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(20px);
-        }
-
-        /* Inline Header Styles */
+        /* ── NAVIGATION ── */
         .landing-nav {
-            background: rgba(255, 255, 255, 0.8) !important;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 18px 0;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 0 32px; /* Fluid edge-to-edge consistent with admin portal */
+            min-height: 72px;
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(45, 106, 79, 0.05);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-
-        .brand-hub {
-            font-weight: 800;
-            font-size: 1.5rem;
-            color: #1b4332 !important;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 12px;
+        }
+
+        .brand-logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 26px;
+            color: var(--g8) !important;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             letter-spacing: -0.5px;
         }
 
-        .nav-link-premium {
-            color: #1b4332 !important;
+        .brand-logo svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--g6);
+        }
+
+        .nav-link-custom {
+            font-size: 14px;
             font-weight: 600;
-            font-size: 0.95rem;
+            color: var(--muted) !important;
             padding: 8px 16px !important;
-            transition: all 0.3s;
-            border-radius: 10px;
+            transition: color 0.2s;
         }
 
-        .nav-link-premium:hover {
-            background: rgba(45, 106, 79, 0.05);
-            color: #2d6a4f !important;
+        .nav-link-custom:hover {
+            color: var(--g6) !important;
         }
 
-        .btn-portal {
-            background: #1b4332;
-            color: white !important;
+        .btn-premium {
+            font-size: 14px;
+            font-weight: 600;
             padding: 10px 24px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.2s;
             text-decoration: none;
-            transition: all 0.3s;
-            box-shadow: 0 8px 15px rgba(27, 67, 50, 0.15);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-portal:hover {
-            background: #2d6a4f;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 20px rgba(27, 67, 50, 0.2);
+        .btn-primary-custom {
+            background: var(--g6);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
         }
 
-        /* Mobile Optimization */
+        .btn-primary-custom:hover {
+            background: var(--g8);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--g6) !important;
+            border: 1.5px solid var(--g6);
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--g05);
+            transform: translateY(-1px);
+        }
+
+        /* ── HERO SECTION ── */
+        .hero {
+            padding: 100px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(168, 224, 160, 0.15) 0%, rgba(250, 248, 243, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--g05);
+            color: var(--g6);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 16px;
+            border-radius: 100px;
+            border: 1px solid var(--g1);
+            margin-bottom: 24px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--g4);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(76, 175, 80, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+
+        .hero-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            line-height: 1;
+            color: var(--g9);
+            margin-bottom: 24px;
+            letter-spacing: -1.5px;
+        }
+
+        .hero-title span {
+            display: block;
+            color: var(--g6);
+            font-style: italic;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 650px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+        }
+
+        .hero-cta {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* ── FEATURES ── */
+        .features {
+            padding: 40px 0 100px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            height: 100%;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            border-color: var(--g2);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-8px);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--g05);
+            color: var(--g6);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .feature-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 24px;
+            color: var(--g9);
+            margin-bottom: 12px;
+        }
+
+        .feature-text {
+            font-size: 15px;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        /* ── PROCESS SECTION ── */
+        .process-section {
+            background: var(--g9);
+            padding: 100px 0;
+            color: white;
+            border-radius: 40px;
+            margin: 0 20px 80px;
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            text-align: center;
+        }
+
+        .process-item h4 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 28px;
+            margin-top: 20px;
+        }
+
+        .process-item p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 15px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 22px;
+            color: var(--g8);
+            margin-bottom: 16px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .footer-copy {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
-            .main-title {
-                font-size: 2.2rem;
-            }
-
-            .sub-title {
-                font-size: 1.1rem;
-                padding: 0 15px;
-            }
-
-            .cta-group {
-                flex-direction: column;
-                padding: 0 20px;
-                gap: 12px !important;
-            }
-
-            .btn-premium {
-                width: 100%;
-                padding: 12px 20px;
-            }
-
-            .feature-grid {
-                margin-top: 40px;
-            }
-
-            .feature-card {
-                padding: 25px;
-            }
-
-            .hero-section {
-                padding: 60px 0 40px;
-            }
-
-            .brand-hub span:last-child {
-                font-size: 1.1rem;
-            }
+            .landing-nav { padding: 0 16px; } /* Slightly tighter on mobile */
+            .hero-title { font-size: 3.5rem; }
+            .hero-cta { flex-direction: column; padding: 0 20px; }
+            .btn-premium { width: 100%; justify-content: center; }
+            .process-grid { grid-template-columns: 1fr; }
+            .process-section { border-radius: 20px; margin: 0 10px 60px; }
         }
     </style>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg landing-nav navbar-light">
-        <div class="container">
-            <a class="brand-hub" href="/">
-                <span style="font-size: 2.2rem;">🌾</span>
-                <span>AGRI INTEL <span style="color: #2d6a4f; font-weight: 400;">HUB</span></span>
+    <nav class="navbar navbar-expand-lg landing-nav">
+        <div class="container-fluid p-0">
+            <a class="brand-logo" href="/">
+                <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 2s2-8-5-8"/></svg>
+                AgriIntel Hub
             </a>
 
-            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navContent" style="padding: 12px !important; margin-right: -12px;">
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navContent">
-                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <ul class="navbar-nav ms-auto align-items-center gap-3">
                     <li class="nav-item">
-                        <a class="nav-link nav-link-premium" href="/predict/">AI Technology</a>
+                        <a class="nav-link nav-link-custom" href="/predict/">AI Analysis</a>
                     </li>
-
-                    <div class="ms-lg-4 d-flex gap-2">
+                    <div class="d-flex gap-2 ms-lg-3 mt-3 mt-lg-0">
                         {% if user.is_authenticated %}
-                        {% if user.is_staff %}
-                        <a href="/admin-panel/dashboard/" class="btn-portal">Return to Intel Hub</a>
+                            {% if user.is_staff %}
+                                <a href="/admin-panel/dashboard/" class="btn-premium btn-primary-custom">Admin Console</a>
+                            {% else %}
+                                <a href="/dashboard/" class="btn-premium btn-primary-custom">My Workspace</a>
+                            {% endif %}
                         {% else %}
-                        <a href="/dashboard/" class="btn-portal">Farmer Workspace</a>
-                        {% endif %}
-                        {% else %}
-                        <a href="/login/" class="btn-portal">Login</a>
+                            <a href="/login/" class="btn-premium btn-outline-custom">Member Login</a>
+                            <a href="/register/" class="btn-premium btn-primary-custom">Register Free</a>
                         {% endif %}
                     </div>
                 </ul>
@@ -269,59 +337,96 @@
         </div>
     </nav>
 
-    <div class="container hero-section">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <h1 class="main-title">Agriculture Intelligence Hub</h1>
-                <p class="sub-title">
-                    Empowering modern farmers and administrators with high-precision AI predictions,
-                    comprehensive cycle tracking, and data-driven insights.
-                </p>
+    <main>
+        <section class="hero container">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                Intelligence System Active
+            </div>
+            <h1 class="hero-title">
+                Cultivating the Future <span>with Precision AI.</span>
+            </h1>
+            <p class="hero-desc">
+                AgriIntel empowers modern agriculture with high-fidelity soil analysis, 
+                predictive crop modeling, and comprehensive growth lifecycle management.
+            </p>
+            <div class="hero-cta">
+                <a href="/predict/" class="btn-premium btn-primary-custom">
+                    Start AI Analysis
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+                <a href="#features" class="btn-premium btn-outline-custom">Explore Technology</a>
+            </div>
+        </section>
 
-                <div class="cta-group">
-                    {% if user.is_authenticated %}
-                    {% if user.is_staff %}
-                    <a href="/admin-panel/dashboard/" class="btn-premium btn-main">🚀 Enter Admin Intelligence Hub</a>
-                    {% else %}
-                    <a href="/dashboard/" class="btn-premium btn-main">🌾 Enter Farmer Dashboard</a>
-                    {% endif %}
-                    {% else %}
-                    <a href="/predict/" class="btn-premium btn-outline">🌱 Explore Predictions</a>
-                    {% endif %}
+        <section id="features" class="features container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">🧠</div>
+                        <h3 class="feature-title">Predictive Intelligence</h3>
+                        <p class="feature-text">Our neural networks analyze complex chemical soil profiles and micro-climates to deliver 98% accurate crop recommendations.</p>
+                    </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">🌿</div>
+                        <h3 class="feature-title">Lifecycle Auditing</h3>
+                        <p class="feature-text">Monitor every phase of growth from seed to harvest with automated task scheduling and expert cultivation advisory.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">📉</div>
+                        <h3 class="feature-title">Analytical Insights</h3>
+                        <p class="feature-text">Generate professional-grade field reports and soil health trajectories to optimize your land's output and sustainability.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="process-section container">
+            <div class="text-center mb-5">
+                <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--g2); font-weight: 700;">Our Methodology</span>
+                <h2 style="font-family: 'Instrument Serif', serif; font-size: 42px; margin-top: 10px;">The Path to Precision</h2>
+            </div>
+            <div class="process-grid">
+                <div class="process-item">
+                    <span style="font-size: 40px;">01</span>
+                    <h4>Data Ingestion</h4>
+                    <p>Input your NPK levels and local climate metrics into our secure interface.</p>
+                </div>
+                <div class="process-item">
+                    <span style="font-size: 40px;">02</span>
+                    <h4>Deep Analysis</h4>
+                    <p>Our AI processes billions of data points to find the optimal biological match.</p>
+                </div>
+                <div class="process-item">
+                    <span style="font-size: 40px;">03</span>
+                    <h4>Scientific Yield</h4>
+                    <p>Receive a structured cultivation plan designed for maximum profitability.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <a href="/" class="footer-logo">AgriIntel Hub</a>
+            <p class="footer-copy">© 2026 AgriIntel Systems • Precision Agricultural Intelligence Platform</p>
+            <div class="mt-3 d-flex justify-content-center gap-4">
+                <a href="#" class="nav-link-custom" style="font-size: 12px;">Documentation</a>
+                <a href="#" class="nav-link-custom" style="font-size: 12px;">Security</a>
+                <a href="#" class="nav-link-custom" style="font-size: 12px;">API Access</a>
             </div>
         </div>
-
-        <div class="row feature-grid g-4 pb-5">
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <span class="feature-icon">🧠</span>
-                    <h3 class="feature-title">AI Predictions</h3>
-                    <p class="feature-desc">Our ML model analyzes NPK values, Temperature, Humidity, and more to
-                        recommend the best crop for your land.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <span class="feature-icon">🔄</span>
-                    <h3 class="feature-title">Growth Cycles</h3>
-                    <p class="feature-desc">Monitor your crops from seed to harvest with personalized schedules and
-                        expert cultivation tasks.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <span class="feature-icon">📊</span>
-                    <h3 class="feature-title">Smart Reports</h3>
-                    <p class="feature-desc">Get detailed analytics and AI-powered suggestions to improve your soil
-                        health and crop quality.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+>
 </body>
 
 </html>
