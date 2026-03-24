@@ -7,7 +7,8 @@ def user_register(request):
     error = None
 
     if request.method == "POST":
-        full_name = request.POST.get("full_name")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
         email = request.POST.get("email")
         password = request.POST.get("password")
 
@@ -16,7 +17,8 @@ def user_register(request):
         else:
             # Map email to username for unique identification
             new_user = User.objects.create_user(username=email, email=email, password=password)
-            new_user.first_name = full_name
+            new_user.first_name = first_name
+            new_user.last_name = last_name
             new_user.save()
             msg = "✅ Registration successful! Please login."
 
