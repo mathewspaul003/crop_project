@@ -96,8 +96,6 @@ def home(request):
                     "values": values
                 })
 
-            with open(r"e:\Mathews\crop\crop_project\debug.txt", "a") as f:
-                f.write(f"USER INPUT: {user_input}\n")
                 
             prediction = model.predict(user_input)
             result = le.inverse_transform(prediction)[0]
