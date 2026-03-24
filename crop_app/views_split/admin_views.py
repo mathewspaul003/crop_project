@@ -335,5 +335,7 @@ def admin_feedback_view(request):
     if not request.user.is_staff:
         return redirect("/dashboard/")
         
+    Feedback.objects.filter(is_read=False).update(is_read=True)
+        
     feedbacks = Feedback.objects.all().order_by("-created_at")
     return render(request, "admin_panel/view_feedback.html", {"feedbacks": feedbacks})
