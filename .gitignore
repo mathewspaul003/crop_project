@@ -47,3 +47,6 @@ Thumbs.db
 # Environment
 .env
 .env.*
+
+# Debug
+debug.txt
