@@ -39,4 +39,5 @@ urlpatterns = [
 
     path("my-sessions/delete/<int:session_id>/", views.delete_session, name="delete_session"),
     path("profile/", views.profile_view, name="profile_view"),
+    path("validate-password/", views.validate_password_ajax, name="validate_password_ajax"),
 ]

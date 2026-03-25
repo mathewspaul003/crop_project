@@ -274,7 +274,8 @@
 
                     <div class="col-md-12 mb-2">
                         <label class="form-label">Password</label>
-                        <input type="password" name="password" class="form-control" required>
+                        <input type="password" name="password" id="id_password" class="form-control" required>
+                        <div id="password-feedback" class="mt-2" style="font-size: 13px; font-weight: 500;"></div>
                     </div>
                 </div>
 
@@ -288,6 +289,41 @@
     </div>
 
 
+    <script>
+        const passwordInput = document.getElementById('id_password');
+        const feedback = document.getElementById('password-feedback');
+        let timeout = null;
+
+        passwordInput.addEventListener('input', () => {
+            clearTimeout(timeout);
+            const password = passwordInput.value;
+
+            if (!password) {
+                feedback.innerHTML = '';
+                return;
+            }
+
+            // Debounce to avoid too many requests
+            timeout = setTimeout(() => {
+                fetch('/validate-password/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password: password }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.valid) {
+                        feedback.innerHTML = '<span class="text-success">✅ Strong password</span>';
+                    } else {
+                        feedback.innerHTML = `<span class="text-danger">❌ ${data.errors.join(' ')}</span>`;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }, 300);
+        });
+    </script>
 </body>
 
 </html>

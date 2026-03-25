@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 def user_register(request):
     msg = None
@@ -15,12 +17,16 @@ def user_register(request):
         if User.objects.filter(username=email).exists():
             error = "An account with this email already exists!"
         else:
-            # Map email to username for unique identification
-            new_user = User.objects.create_user(username=email, email=email, password=password)
-            new_user.first_name = first_name
-            new_user.last_name = last_name
-            new_user.save()
-            msg = "✅ Registration successful! Please login."
+            try:
+                validate_password(password)
+                # Map email to username for unique identification
+                new_user = User.objects.create_user(username=email, email=email, password=password)
+                new_user.first_name = first_name
+                new_user.last_name = last_name
+                new_user.save()
+                msg = "✅ Registration successful! Please login."
+            except ValidationError as e:
+                error = " ".join(e.messages)
 
     return render(request, "user/register.html", {"msg": msg, "error": error})
 
