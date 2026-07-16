@@ -1,4 +1,4 @@
-# Agriculture Intelligence Hub 🌾🚜✨
+# Agriculture Intelligence Hub 🌾🚜✨ 
 
 Empowering modern farmers and administrators with high-precision AI predictions, real-time crop tracking, and intelligent agricultural insights.
 
